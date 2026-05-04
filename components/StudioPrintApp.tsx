@@ -11,6 +11,9 @@ import {
   Images,
   Maximize,
   Maximize2,
+  Printer,
+  DownloadCloud,
+  FileText,
   Minus,
   Plus,
   Sparkles,
@@ -289,7 +292,19 @@ export function StudioPrintApp() {
           <span>{layout.count} copies</span>
         </div>
         <div className="topbar-status">
-          <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+          <div className="topbar-actions">
+            <button className="chrome-button" title="Export PNG" onClick={exportPng}>
+              <DownloadCloud size={16} />
+            </button>
+            <button className="chrome-button" title="Export PDF" onClick={exportPdf}>
+              <FileText size={16} />
+            </button>
+            <button className="chrome-button" title="Print" onClick={print}>
+              <Printer size={16} />
+            </button>
+            <span className="topbar-action-sep" />
+            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+          </div>
         </div>
       </header>
 

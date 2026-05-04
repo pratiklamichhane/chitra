@@ -1,6 +1,6 @@
 "use client";
 
-import { Eraser, RotateCcw, X } from "lucide-react";
+import { Eraser, RotateCcw, X, RefreshCw, CornerUpLeft } from "lucide-react";
 import type { PointerEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { imageToCanvas } from "@/composables/useCanvasRenderer";
@@ -22,9 +22,14 @@ export function ManualCleanupModal({
 }: ManualCleanupModalProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const workingCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const originalCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const drawingRef = useRef(false);
+  const lastPointRef = useRef<{ x: number; y: number } | null>(null);
   const [brushSize, setBrushSize] = useState(36);
   const [undoStack, setUndoStack] = useState<ImageData[]>([]);
+  const [redoStack, setRedoStack] = useState<ImageData[]>([]);
+  const [mode, setMode] = useState<"erase" | "recover">("erase");
+  const [pointerPos, setPointerPos] = useState<{ x: number; y: number } | null>(null);
   const hasSubject = Boolean(subjectCanvas);
 
   const drawPreview = useCallback(() => {
@@ -43,15 +48,20 @@ export function ManualCleanupModal({
   useEffect(() => {
     if (!subjectCanvas) {
       workingCanvasRef.current = null;
+      originalCanvasRef.current = null;
       setUndoStack([]);
+      setRedoStack([]);
       const preview = canvasRef.current;
       const ctx = preview?.getContext("2d");
       if (preview && ctx) ctx.clearRect(0, 0, preview.width, preview.height);
       return;
     }
 
+    // Keep an original copy for recover operations
+    originalCanvasRef.current = imageToCanvas(subjectCanvas);
     workingCanvasRef.current = imageToCanvas(subjectCanvas);
     setUndoStack([]);
+    setRedoStack([]);
     drawPreview();
   }, [drawPreview, subjectCanvas, isOpen]);
 
@@ -71,14 +81,65 @@ export function ManualCleanupModal({
 
       ctx.save();
       ctx.globalCompositeOperation = "destination-out";
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.lineWidth = radius * 2;
+      ctx.lineCap = "round";
+      if (lastPointRef.current) {
+        const p = lastPointRef.current;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
+      lastPointRef.current = { x, y };
       drawPreview();
     },
     [brushSize, drawPreview],
   );
+
+    const recoverAt = useCallback(
+      (event: PointerEvent<HTMLCanvasElement>) => {
+        const preview = canvasRef.current;
+        const working = workingCanvasRef.current;
+        const original = originalCanvasRef.current;
+        if (!preview || !working || !original) return;
+
+        const rect = preview.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width) * working.width;
+        const y = ((event.clientY - rect.top) / rect.height) * working.height;
+        const scale = working.width / rect.width;
+        const radius = (brushSize * scale) / 2;
+        const ctx = working.getContext("2d");
+        const octx = original.getContext("2d");
+        if (!ctx || !octx) return;
+
+        // Copy a square region from the original and stamp it onto the working canvas clipped to a circle
+        const sx = Math.max(0, Math.floor(x - radius));
+        const sy = Math.max(0, Math.floor(y - radius));
+        const sSize = Math.min(original.width - sx, Math.floor(radius * 2));
+        const temp = document.createElement("canvas");
+        temp.width = sSize;
+        temp.height = sSize;
+        const tctx = temp.getContext("2d");
+        if (!tctx) return;
+        tctx.drawImage(original, sx, sy, sSize, sSize, 0, 0, sSize, sSize);
+
+        // draw circular mask
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(temp, 0, 0, sSize, sSize, sx, sy, sSize, sSize);
+        ctx.restore();
+        drawPreview();
+      },
+      [brushSize, drawPreview],
+    );
 
   const saveToUndo = useCallback(() => {
     const working = workingCanvasRef.current;
@@ -86,7 +147,12 @@ export function ManualCleanupModal({
     const ctx = working.getContext("2d");
     if (!ctx) return;
     const imageData = ctx.getImageData(0, 0, working.width, working.height);
-    setUndoStack((prev) => [...prev, imageData]);
+    setUndoStack((prev) => {
+      const next = [...prev, imageData];
+      if (next.length > 30) next.shift();
+      return next;
+    });
+    setRedoStack([]);
   }, []);
 
   const handleUndo = useCallback(() => {
@@ -95,12 +161,32 @@ export function ManualCleanupModal({
     const ctx = working.getContext("2d");
     if (!ctx) return;
 
+    // Move current into redo, restore last undo
+    const current = ctx.getImageData(0, 0, working.width, working.height);
+    setRedoStack((prev) => [...prev, current]);
+
     const newStack = [...undoStack];
     const imageData = newStack.pop()!;
     ctx.putImageData(imageData, 0, 0);
     setUndoStack(newStack);
     drawPreview();
   }, [undoStack, drawPreview]);
+
+  const handleRedo = useCallback(() => {
+    const working = workingCanvasRef.current;
+    if (!working || redoStack.length === 0) return;
+    const ctx = working.getContext("2d");
+    if (!ctx) return;
+
+    const newRedo = [...redoStack];
+    const imageData = newRedo.pop()!;
+    // push current to undo
+    const current = ctx.getImageData(0, 0, working.width, working.height);
+    setUndoStack((prev) => [...prev, current]);
+    ctx.putImageData(imageData, 0, 0);
+    setRedoStack(newRedo);
+    drawPreview();
+  }, [redoStack, drawPreview]);
 
   const commitCleanup = useCallback(() => {
     drawingRef.current = false;
@@ -112,6 +198,15 @@ export function ManualCleanupModal({
     onReset();
     setUndoStack([]);
   }, [onReset]);
+
+  const handlePointerMovePreview = useCallback((event: PointerEvent<HTMLCanvasElement>) => {
+    const preview = canvasRef.current;
+    if (!preview) return;
+    const rect = preview.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    setPointerPos({ x, y });
+  }, []);
 
   const handleClose = useCallback(() => {
     commitCleanup();
@@ -143,15 +238,36 @@ export function ManualCleanupModal({
                 event.currentTarget.setPointerCapture(event.pointerId);
                 saveToUndo();
                 drawingRef.current = true;
-                eraseAt(event);
+                lastPointRef.current = null;
+                if (mode === "erase") eraseAt(event);
+                else recoverAt(event);
               }}
               onPointerMove={(event) => {
+                handlePointerMovePreview(event);
                 if (!drawingRef.current) return;
-                eraseAt(event);
+                if (mode === "erase") eraseAt(event);
+                else recoverAt(event);
               }}
-              onPointerUp={commitCleanup}
-              onPointerCancel={commitCleanup}
+              onPointerUp={() => {
+                lastPointRef.current = null;
+                commitCleanup();
+              }}
+              onPointerCancel={() => {
+                lastPointRef.current = null;
+                commitCleanup();
+              }}
             />
+            {pointerPos && (
+              <div
+                className="brush-preview"
+                style={{
+                  left: pointerPos.x - brushSize / 2,
+                  top: pointerPos.y - brushSize / 2,
+                  width: brushSize,
+                  height: brushSize,
+                }}
+              />
+            )}
             {!hasSubject ? (
               <div className="cleanup-empty-modal">
                 <Eraser size={32} />
@@ -162,6 +278,24 @@ export function ManualCleanupModal({
           </div>
 
           <div className="cleanup-controls">
+              <div className="mode-toggle">
+                <button
+                  className={`mode-button ${mode === "erase" ? "active" : ""}`}
+                  onClick={() => setMode("erase")}
+                  title="Erase"
+                >
+                  <Eraser size={14} />
+                  <span>Erase</span>
+                </button>
+                <button
+                  className={`mode-button ${mode === "recover" ? "active" : ""}`}
+                  onClick={() => setMode("recover")}
+                  title="Recover"
+                >
+                  <CornerUpLeft size={14} />
+                  <span>Recover</span>
+                </button>
+              </div>
             <div className="control-section">
               <label className="control-label">
                 <span className="label-text">Brush Size</span>
@@ -191,10 +325,10 @@ export function ManualCleanupModal({
             <div className="control-section">
               <label className="control-label">Instructions</label>
               <div className="instructions-text">
-                <p>• Drag your mouse over the background to erase it</p>
-                <p>• Use smaller brush for precise edges</p>
-                <p>• Use larger brush for quick cleanup</p>
-                <p>• Click Undo to revert changes</p>
+                <p><strong>How to clean:</strong></p>
+                <p>Drag to erase remaining background; switch to <em>Recover</em> to restore pixels.</p>
+                <p>Use a smaller brush for hair and edges; larger brush for broad areas.</p>
+                <p>Use <strong>Undo</strong> / <strong>Redo</strong> to step back or forward. Reset returns to automatic result.</p>
               </div>
             </div>
 
@@ -204,8 +338,16 @@ export function ManualCleanupModal({
                 disabled={!hasSubject || undoStack.length === 0}
                 onClick={handleUndo}
               >
-                <RotateCcw size={16} />
+                <CornerUpLeft size={16} />
                 <span>Undo</span>
+              </button>
+              <button
+                className="action-button redo-button"
+                disabled={!hasSubject || redoStack.length === 0}
+                onClick={handleRedo}
+              >
+                <RefreshCw size={16} />
+                <span>Redo</span>
               </button>
               <button
                 className="action-button reset-button"
