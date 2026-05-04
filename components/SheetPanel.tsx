@@ -14,7 +14,7 @@ type SheetPanelProps = {
 export function SheetPanel({ sheetId, orientation, customWidthMm, customHeightMm, marginMm, gapMm, onChange }: SheetPanelProps) {
   return (
     <section className="fluent-card">
-      <div className="section-title"><span>6. Sheet</span></div>
+      <div className="section-title"><span>7. Sheet</span></div>
       <div className="preset-row">
         {sheetPresets.slice(0, 4).map((preset) => (
           <button key={preset.id} className={sheetId === preset.id ? "selected" : ""} onClick={() => onChange({ sheetId: preset.id })}>

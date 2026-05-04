@@ -14,7 +14,7 @@ type PhotoSizePanelProps = {
 export function PhotoSizePanel({ width, height, unit, dpi, widthPx, heightPx, onChange }: PhotoSizePanelProps) {
   return (
     <section className="fluent-card">
-      <div className="section-title"><span>4. Photo Size</span></div>
+      <div className="section-title"><span>5. Photo Size</span></div>
       <div className="preset-row">
         {photoPresets.map((preset) => (
           <button key={preset.id} onClick={() => onChange(preset)}>{preset.label}</button>

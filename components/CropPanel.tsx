@@ -11,7 +11,7 @@ export function CropPanel({ crop, onChange, onReset }: CropPanelProps) {
   return (
     <section className="fluent-card">
       <div className="section-title">
-        <span>5. Crop</span>
+        <span>6. Crop</span>
         <button className="icon-button" onClick={onReset} title="Reset crop"><RotateCcw size={15} /></button>
       </div>
       <label className="control-row">

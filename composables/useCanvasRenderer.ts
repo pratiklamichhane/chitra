@@ -110,94 +110,6 @@ function refineMaskAlpha(value: number) {
   return Math.round(smooth * 255);
 }
 
-function removeDetachedAlphaIslands(imageData: ImageData, width: number, height: number) {
-  const alphaThreshold = 18;
-  const labels = new Int32Array(width * height);
-  const queue = new Int32Array(width * height);
-  const components: Array<{
-    label: number;
-    score: number;
-    darkScore: number;
-    skinScore: number;
-  }> = [];
-  let currentLabel = 0;
-  let mainComponent = components[0];
-
-  for (let start = 0; start < labels.length; start += 1) {
-    if (labels[start] !== 0 || imageData.data[start * 4 + 3] <= alphaThreshold) continue;
-
-    currentLabel += 1;
-    let head = 0;
-    let tail = 0;
-    let score = 0;
-    let darkScore = 0;
-    let skinScore = 0;
-    labels[start] = currentLabel;
-    queue[tail] = start;
-    tail += 1;
-
-    while (head < tail) {
-      const index = queue[head];
-      head += 1;
-      const p = index * 4;
-      const alpha = imageData.data[p + 3];
-      const r = imageData.data[p];
-      const g = imageData.data[p + 1];
-      const b = imageData.data[p + 2];
-      score += alpha;
-      if ((r + g + b) / 3 < 88) darkScore += alpha;
-      if (skinToneWeight(r, g, b) > 0.35) skinScore += alpha;
-
-      const x = index % width;
-      const y = Math.floor(index / width);
-      const neighbors = [
-        x > 0 ? index - 1 : -1,
-        x < width - 1 ? index + 1 : -1,
-        y > 0 ? index - width : -1,
-        y < height - 1 ? index + width : -1,
-      ];
-
-      for (const neighbor of neighbors) {
-        if (neighbor < 0 || labels[neighbor] !== 0 || imageData.data[neighbor * 4 + 3] <= alphaThreshold) continue;
-        labels[neighbor] = currentLabel;
-        queue[tail] = neighbor;
-        tail += 1;
-      }
-    }
-
-    const component = { label: currentLabel, score, darkScore, skinScore };
-    components.push(component);
-    if (!mainComponent || component.score > mainComponent.score) {
-      mainComponent = component;
-    }
-  }
-
-  if (!mainComponent) return;
-
-  const labelsToRemove = new Set<number>();
-
-  for (const component of components) {
-    if (component.label === mainComponent.label) continue;
-
-    const darkRatio = component.darkScore / component.score;
-    const skinRatio = component.skinScore / component.score;
-    const looksLikeSubjectDetail = darkRatio > 0.42 || skinRatio > 0.32;
-    const visibleDetachedPiece = component.score > mainComponent.score * 0.00015;
-
-    if (visibleDetachedPiece && !looksLikeSubjectDetail) {
-      labelsToRemove.add(component.label);
-    }
-  }
-
-  if (labelsToRemove.size === 0) return;
-
-  for (let index = 0; index < labels.length; index += 1) {
-    if (labelsToRemove.has(labels[index])) {
-      imageData.data[index * 4 + 3] = 0;
-    }
-  }
-}
-
 export function applyAlphaMask(
   source: HTMLCanvasElement,
   mask: Float32Array | Uint8ClampedArray,
@@ -242,7 +154,6 @@ export function applyAlphaMask(
     const maskAlpha = fullMask.data[i + 3] / 255;
     sourceData.data[i + 3] = Math.min(sourceData.data[i + 3], refineMaskAlpha(maskAlpha));
   }
-  removeDetachedAlphaIslands(sourceData, source.width, source.height);
   outCtx.putImageData(sourceData, 0, 0);
   return out;
 }

@@ -652,6 +652,46 @@ label span,
   line-height: 1.35;
 }
 
+.cleanup-canvas-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 220px;
+  overflow: hidden;
+  border: 1px solid #d8dde5;
+  border-radius: 5px;
+  background:
+    linear-gradient(45deg, #e3e7ee 25%, transparent 25%, transparent 75%, #e3e7ee 75%),
+    linear-gradient(45deg, #e3e7ee 25%, transparent 25%, transparent 75%, #e3e7ee 75%),
+    #f8fafc;
+  background-position: 0 0, 8px 8px, 0 0;
+  background-size: 16px 16px, 16px 16px, auto;
+}
+
+.cleanup-canvas {
+  display: block;
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+}
+
+.cleanup-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  color: #657184;
+  font-size: 12px;
+  font-weight: 650;
+  pointer-events: none;
+}
+
 .export-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

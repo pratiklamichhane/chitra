@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Expand,
+  Eraser,
   ExternalLink,
   Grid2X2,
   Hand,
@@ -22,6 +23,7 @@ import { CropPanel } from "./CropPanel";
 import { ExportPanel } from "./ExportPanel";
 import { ImageUploader } from "./ImageUploader";
 import { LayoutPanel } from "./LayoutPanel";
+import { ManualCleanupPanel } from "./ManualCleanupPanel";
 import { PhotoSizePanel } from "./PhotoSizePanel";
 import { PreviewCanvas } from "./PreviewCanvas";
 import { SheetPanel } from "./SheetPanel";
@@ -45,6 +47,7 @@ const workflowSections = [
   { id: "upload", label: "Upload", icon: UploadCloud },
   { id: "beautify", label: "Beautify", icon: Sparkles },
   { id: "background", label: "Background", icon: Images },
+  { id: "cleanup", label: "Cleanup", icon: Eraser },
   { id: "photo-size", label: "Photo Size", icon: SquareDashed },
   { id: "crop", label: "Crop", icon: CropIcon },
   { id: "sheet", label: "Sheet Layout", icon: Grid2X2 },
@@ -59,6 +62,7 @@ export function StudioPrintApp() {
   const [fileName, setFileName] = useState("");
   const [sourceImage, setSourceImage] = useState<HTMLImageElement | null>(null);
   const [originalCanvas, setOriginalCanvas] = useState<HTMLCanvasElement | null>(null);
+  const [autoSubjectCanvas, setAutoSubjectCanvas] = useState<HTMLCanvasElement | null>(null);
   const [subjectCanvas, setSubjectCanvas] = useState<HTMLCanvasElement | null>(null);
   const [renderedSheet, setRenderedSheet] = useState<HTMLCanvasElement | null>(null);
   const [beforeView, setBeforeView] = useState(false);
@@ -155,6 +159,7 @@ export function StudioPrintApp() {
     });
     setSourceImage(image);
     setOriginalCanvas(imageToCanvas(image));
+    setAutoSubjectCanvas(null);
     setSubjectCanvas(null);
     setBeforeView(false);
     setCrop({ zoom: 1, offsetX: 0, offsetY: 0, rotation: 0 });
@@ -207,12 +212,25 @@ export function StudioPrintApp() {
     if (!originalCanvas) return;
     try {
       const result = await removeBackground(originalCanvas, feather);
+      setAutoSubjectCanvas(imageToCanvas(result.subjectCanvas));
       setSubjectCanvas(result.subjectCanvas);
       setBeforeView(false);
     } catch {
+      setAutoSubjectCanvas(null);
       setSubjectCanvas(null);
     }
   }, [feather, originalCanvas, removeBackground]);
+
+  const updateManualCleanup = useCallback((canvas: HTMLCanvasElement) => {
+    setSubjectCanvas(canvas);
+    setBeforeView(false);
+  }, []);
+
+  const resetManualCleanup = useCallback(() => {
+    if (!autoSubjectCanvas) return;
+    setSubjectCanvas(imageToCanvas(autoSubjectCanvas));
+    setBeforeView(false);
+  }, [autoSubjectCanvas]);
 
   const exportPng = useCallback(() => {
     if (renderedSheet) void canvasToPng(renderedSheet);
@@ -317,6 +335,13 @@ export function StudioPrintApp() {
               onFeatherChange={setFeather}
               onProcess={processBackground}
               onToggleBeforeAfter={() => setBeforeView((value) => !value)}
+            />
+          </div>
+          <div id="cleanup" data-section="cleanup">
+            <ManualCleanupPanel
+              subjectCanvas={subjectCanvas}
+              onChange={updateManualCleanup}
+              onReset={resetManualCleanup}
             />
           </div>
           <div id="photo-size" data-section="photo-size">
