@@ -1,7 +1,7 @@
 "use client";
 
-import { Eraser, RotateCcw, X, RefreshCw, CornerUpLeft } from "lucide-react";
-import type { PointerEvent } from "react";
+import { Eraser, RotateCcw, X, RefreshCw, CornerUpLeft, ZoomIn, ZoomOut, Maximize } from "lucide-react";
+import type { PointerEvent, WheelEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { imageToCanvas } from "@/composables/useCanvasRenderer";
 
@@ -30,7 +30,10 @@ export function ManualCleanupModal({
   const [redoStack, setRedoStack] = useState<ImageData[]>([]);
   const [mode, setMode] = useState<"erase" | "recover">("erase");
   const [pointerPos, setPointerPos] = useState<{ x: number; y: number } | null>(null);
+  const [canvasSize, setCanvasSize] = useState<{ width: number; height: number } | null>(null);
+  const [viewZoom, setViewZoom] = useState(1);
   const hasSubject = Boolean(subjectCanvas);
+  const zoomLabel = viewZoom === 1 ? "Fit" : `${Math.round(viewZoom * 100)}%`;
 
   const drawPreview = useCallback(() => {
     const preview = canvasRef.current;
@@ -45,25 +48,52 @@ export function ManualCleanupModal({
     ctx.drawImage(working, 0, 0);
   }, []);
 
+  const updateViewZoom = useCallback((next: number | ((current: number) => number)) => {
+    setViewZoom((current) => {
+      const value = typeof next === "function" ? next(current) : next;
+      return Math.round(Math.min(4, Math.max(0.5, value)) * 100) / 100;
+    });
+  }, []);
+
+  const clearHistory = useCallback(() => {
+    setUndoStack([]);
+    setRedoStack([]);
+  }, []);
+
   useEffect(() => {
+    let resetTimer: number | null = null;
+
     if (!subjectCanvas) {
       workingCanvasRef.current = null;
       originalCanvasRef.current = null;
-      setUndoStack([]);
-      setRedoStack([]);
       const preview = canvasRef.current;
       const ctx = preview?.getContext("2d");
       if (preview && ctx) ctx.clearRect(0, 0, preview.width, preview.height);
-      return;
+      resetTimer = window.setTimeout(() => {
+        setCanvasSize(null);
+        setPointerPos(null);
+        setViewZoom(1);
+        clearHistory();
+      }, 0);
+      return () => {
+        if (resetTimer !== null) window.clearTimeout(resetTimer);
+      };
     }
 
     // Keep an original copy for recover operations
     originalCanvasRef.current = imageToCanvas(subjectCanvas);
     workingCanvasRef.current = imageToCanvas(subjectCanvas);
-    setUndoStack([]);
-    setRedoStack([]);
     drawPreview();
-  }, [drawPreview, subjectCanvas, isOpen]);
+    resetTimer = window.setTimeout(() => {
+      setCanvasSize({ width: subjectCanvas.width, height: subjectCanvas.height });
+      setViewZoom(1);
+      setPointerPos(null);
+      clearHistory();
+    }, 0);
+    return () => {
+      if (resetTimer !== null) window.clearTimeout(resetTimer);
+    };
+  }, [clearHistory, drawPreview, subjectCanvas, isOpen]);
 
   const eraseAt = useCallback(
     (event: PointerEvent<HTMLCanvasElement>) => {
@@ -101,45 +131,54 @@ export function ManualCleanupModal({
     [brushSize, drawPreview],
   );
 
-    const recoverAt = useCallback(
-      (event: PointerEvent<HTMLCanvasElement>) => {
-        const preview = canvasRef.current;
-        const working = workingCanvasRef.current;
-        const original = originalCanvasRef.current;
-        if (!preview || !working || !original) return;
+  const recoverAt = useCallback(
+    (event: PointerEvent<HTMLCanvasElement>) => {
+      const preview = canvasRef.current;
+      const working = workingCanvasRef.current;
+      const original = originalCanvasRef.current;
+      if (!preview || !working || !original) return;
 
-        const rect = preview.getBoundingClientRect();
-        const x = ((event.clientX - rect.left) / rect.width) * working.width;
-        const y = ((event.clientY - rect.top) / rect.height) * working.height;
-        const scale = working.width / rect.width;
-        const radius = (brushSize * scale) / 2;
-        const ctx = working.getContext("2d");
-        const octx = original.getContext("2d");
-        if (!ctx || !octx) return;
+      const rect = preview.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * working.width;
+      const y = ((event.clientY - rect.top) / rect.height) * working.height;
+      const scale = working.width / rect.width;
+      const radius = (brushSize * scale) / 2;
+      const ctx = working.getContext("2d");
+      if (!ctx) return;
 
-        // Copy a square region from the original and stamp it onto the working canvas clipped to a circle
-        const sx = Math.max(0, Math.floor(x - radius));
-        const sy = Math.max(0, Math.floor(y - radius));
-        const sSize = Math.min(original.width - sx, Math.floor(radius * 2));
-        const temp = document.createElement("canvas");
-        temp.width = sSize;
-        temp.height = sSize;
-        const tctx = temp.getContext("2d");
-        if (!tctx) return;
-        tctx.drawImage(original, sx, sy, sSize, sSize, 0, 0, sSize, sSize);
+      const stampRecover = (stampX: number, stampY: number) => {
+        const size = Math.max(1, Math.floor(radius * 2));
+        const sx = Math.max(0, Math.floor(stampX - radius));
+        const sy = Math.max(0, Math.floor(stampY - radius));
+        const sw = Math.min(original.width - sx, size);
+        const sh = Math.min(original.height - sy, size);
+        if (sw <= 0 || sh <= 0) return;
 
-        // draw circular mask
         ctx.save();
         ctx.beginPath();
-        ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.closePath();
+        ctx.arc(stampX, stampY, radius, 0, Math.PI * 2);
         ctx.clip();
-        ctx.drawImage(temp, 0, 0, sSize, sSize, sx, sy, sSize, sSize);
+        ctx.drawImage(original, sx, sy, sw, sh, sx, sy, sw, sh);
         ctx.restore();
-        drawPreview();
-      },
-      [brushSize, drawPreview],
-    );
+      };
+
+      const previous = lastPointRef.current;
+      if (previous) {
+        const distance = Math.hypot(x - previous.x, y - previous.y);
+        const steps = Math.max(1, Math.ceil(distance / Math.max(1, radius * 0.35)));
+        for (let index = 1; index <= steps; index += 1) {
+          const progress = index / steps;
+          stampRecover(previous.x + (x - previous.x) * progress, previous.y + (y - previous.y) * progress);
+        }
+      } else {
+        stampRecover(x, y);
+      }
+
+      lastPointRef.current = { x, y };
+      drawPreview();
+    },
+    [brushSize, drawPreview],
+  );
 
   const saveToUndo = useCallback(() => {
     const working = workingCanvasRef.current;
@@ -196,8 +235,8 @@ export function ManualCleanupModal({
 
   const handleReset = useCallback(() => {
     onReset();
-    setUndoStack([]);
-  }, [onReset]);
+    clearHistory();
+  }, [clearHistory, onReset]);
 
   const handlePointerMovePreview = useCallback((event: PointerEvent<HTMLCanvasElement>) => {
     const preview = canvasRef.current;
@@ -207,6 +246,13 @@ export function ManualCleanupModal({
     const y = event.clientY - rect.top;
     setPointerPos({ x, y });
   }, []);
+
+  const handleWheelZoom = useCallback((event: WheelEvent<HTMLDivElement>) => {
+    if (!hasSubject) return;
+    if (!event.metaKey && !event.ctrlKey) return;
+    event.preventDefault();
+    updateViewZoom((current) => current + (event.deltaY > 0 ? -0.15 : 0.15));
+  }, [hasSubject, updateViewZoom]);
 
   const handleClose = useCallback(() => {
     commitCleanup();
@@ -229,45 +275,56 @@ export function ManualCleanupModal({
         </div>
 
         <div className="modal-body cleanup-modal-body">
-          <div className="cleanup-canvas-container">
-            <canvas
-              ref={canvasRef}
-              className="cleanup-canvas-modal"
-              onPointerDown={(event) => {
-                if (!hasSubject) return;
-                event.currentTarget.setPointerCapture(event.pointerId);
-                saveToUndo();
-                drawingRef.current = true;
-                lastPointRef.current = null;
-                if (mode === "erase") eraseAt(event);
-                else recoverAt(event);
+          <div className="cleanup-canvas-container" onWheel={handleWheelZoom}>
+            <div
+              className="cleanup-canvas-stage"
+              style={{
+                width: canvasSize ? `min(${canvasSize.width * viewZoom}px, ${viewZoom * 100}%)` : undefined,
+                aspectRatio: canvasSize ? `${canvasSize.width} / ${canvasSize.height}` : undefined,
               }}
-              onPointerMove={(event) => {
-                handlePointerMovePreview(event);
-                if (!drawingRef.current) return;
-                if (mode === "erase") eraseAt(event);
-                else recoverAt(event);
-              }}
-              onPointerUp={() => {
-                lastPointRef.current = null;
-                commitCleanup();
-              }}
-              onPointerCancel={() => {
-                lastPointRef.current = null;
-                commitCleanup();
-              }}
-            />
-            {pointerPos && (
-              <div
-                className="brush-preview"
-                style={{
-                  left: pointerPos.x - brushSize / 2,
-                  top: pointerPos.y - brushSize / 2,
-                  width: brushSize,
-                  height: brushSize,
+            >
+              <canvas
+                ref={canvasRef}
+                className="cleanup-canvas-modal"
+                onPointerDown={(event) => {
+                  if (!hasSubject) return;
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  saveToUndo();
+                  drawingRef.current = true;
+                  lastPointRef.current = null;
+                  if (mode === "erase") eraseAt(event);
+                  else recoverAt(event);
+                }}
+                onPointerMove={(event) => {
+                  handlePointerMovePreview(event);
+                  if (!drawingRef.current) return;
+                  if (mode === "erase") eraseAt(event);
+                  else recoverAt(event);
+                }}
+                onPointerLeave={() => {
+                  if (!drawingRef.current) setPointerPos(null);
+                }}
+                onPointerUp={() => {
+                  lastPointRef.current = null;
+                  commitCleanup();
+                }}
+                onPointerCancel={() => {
+                  lastPointRef.current = null;
+                  commitCleanup();
                 }}
               />
-            )}
+              {pointerPos && hasSubject ? (
+                <div
+                  className="brush-preview"
+                  style={{
+                    left: pointerPos.x - brushSize / 2,
+                    top: pointerPos.y - brushSize / 2,
+                    width: brushSize,
+                    height: brushSize,
+                  }}
+                />
+              ) : null}
+            </div>
             {!hasSubject ? (
               <div className="cleanup-empty-modal">
                 <Eraser size={32} />
@@ -278,6 +335,18 @@ export function ManualCleanupModal({
           </div>
 
           <div className="cleanup-controls">
+            <div className="cleanup-toolbar">
+              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)} title="Zoom out">
+                <ZoomOut size={15} />
+              </button>
+              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom(1)} title="Fit view">
+                <Maximize size={15} />
+              </button>
+              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)} title="Zoom in">
+                <ZoomIn size={15} />
+              </button>
+              <strong>{zoomLabel}</strong>
+            </div>
               <div className="mode-toggle">
                 <button
                   className={`mode-button ${mode === "erase" ? "active" : ""}`}
