@@ -107,6 +107,7 @@ select:focus {
   width: 34px;
   height: 34px;
   overflow: hidden;
+  border: 1px solid rgba(15, 98, 214, 0.5);
   border-radius: 8px;
   background: #ffffff;
 }
