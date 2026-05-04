@@ -47,7 +47,7 @@ export function useSegmentation() {
       try {
         const [session, ort] = await Promise.all([loadModel(), import("onnxruntime-web")]);
         const sourceCanvas = imageToCanvas(image);
-        const inferenceCanvas = resizeImageForInference(sourceCanvas, 768);
+        const inferenceCanvas = resizeImageForInference(sourceCanvas, 1024);
         const tensor = canvasToModnetTensor(inferenceCanvas, ort);
         const inputName = session.inputNames[0];
         const output = await session.run({ [inputName]: tensor });
