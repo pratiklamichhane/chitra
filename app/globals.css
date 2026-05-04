@@ -511,6 +511,186 @@ select:focus {
   color: #ffffff;
 }
 
+.chitra-tour-popover.driver-popover {
+  width: min(300px, calc(100vw - 28px));
+  min-width: 0;
+  max-width: calc(100vw - 28px);
+  border: 1px solid #d9dde4;
+  border-radius: 7px;
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(25, 34, 48, 0.18);
+  color: #202632;
+  padding: 14px;
+}
+
+.chitra-tour-popover .driver-popover-title {
+  color: #202632;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 740;
+  line-height: 1.25;
+  padding-right: 24px;
+}
+
+.chitra-tour-popover .driver-popover-description {
+  color: #5f6b7d;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.chitra-tour-popover .driver-popover-footer {
+  margin-top: 13px;
+  gap: 12px;
+}
+
+.chitra-tour-popover .driver-popover-progress-text {
+  color: #6b7280;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.chitra-tour-popover .driver-popover-navigation-btns {
+  gap: 6px;
+}
+
+.chitra-tour-popover .driver-popover-navigation-btns button {
+  min-height: 28px;
+  border: 1px solid #d5dae2;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #253044;
+  padding: 0 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 28px;
+  text-shadow: none;
+}
+
+.chitra-tour-popover .driver-popover-navigation-btns button:hover,
+.chitra-tour-popover .driver-popover-navigation-btns button:focus {
+  border-color: #c8d2e3;
+  background: #eef3fb;
+  color: #0f62d6;
+}
+
+.chitra-tour-popover .driver-popover-navigation-btns .driver-popover-next-btn {
+  border-color: rgba(15, 98, 214, 0.42);
+  background: var(--blue);
+  color: #ffffff;
+}
+
+.chitra-tour-popover .driver-popover-navigation-btns .driver-popover-next-btn:hover,
+.chitra-tour-popover .driver-popover-navigation-btns .driver-popover-next-btn:focus {
+  border-color: rgba(15, 98, 214, 0.5);
+  background: var(--blue-strong);
+  color: #ffffff;
+}
+
+.chitra-tour-popover .driver-popover-close-btn {
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  color: #7b8494;
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.chitra-tour-popover .driver-popover-close-btn:hover,
+.chitra-tour-popover .driver-popover-close-btn:focus {
+  background: #f3f6fa;
+  color: #202632;
+}
+
+.tour-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  background: rgba(17, 24, 39, 0.34);
+  padding: 20px;
+}
+
+.tour-welcome {
+  width: min(360px, 100%);
+  display: grid;
+  gap: 16px;
+  border: 1px solid #d9dde4;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 18px 44px rgba(25, 34, 48, 0.2);
+  padding: 20px;
+}
+
+.tour-welcome-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(15, 98, 214, 0.5);
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.tour-welcome-mark img {
+  display: block;
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.tour-welcome h2 {
+  margin: 0;
+  color: #202632;
+  font-size: 18px;
+  font-weight: 740;
+  line-height: 1.2;
+}
+
+.tour-welcome p {
+  margin: 8px 0 0;
+  color: #5f6b7d;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.tour-welcome-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.secondary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  border: 1px solid #d5dae2;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #253044;
+  padding: 0 12px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.secondary-action:hover:not(:disabled) {
+  border-color: #c8d2e3;
+  background: #eef3fb;
+  color: #0f62d6;
+}
+
+.tour-start-action {
+  width: auto;
+  min-height: 34px;
+  padding: 0 13px;
+  box-shadow: none;
+}
+
 .icon-button {
   width: 29px;
   min-height: 29px;

@@ -3,10 +3,12 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { driver, type DriveStep, type Driver } from "driver.js";
 import {
   Expand,
   Eraser,
   ExternalLink,
+  HelpCircle,
   Star,
   Grid2X2,
   Hand,
@@ -61,10 +63,14 @@ const workflowSections = [
   { id: "export", label: "Export", icon: ExternalLink },
 ] as const;
 
+const STUDIO_TOUR_STORAGE_KEY = "chitra:studio-tour-seen";
+
 export function StudioPrintApp() {
   const appShellRef = useRef<HTMLDivElement | null>(null);
   const controlRailRef = useRef<HTMLElement | null>(null);
   const sectionSpyFrameRef = useRef<number | null>(null);
+  const tourRef = useRef<Driver | null>(null);
+  const autoTourStartedRef = useRef(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [fileName, setFileName] = useState("");
   const [sourceImage, setSourceImage] = useState<HTMLImageElement | null>(null);
@@ -94,6 +100,7 @@ export function StudioPrintApp() {
   const [activeSection, setActiveSection] = useState<(typeof workflowSections)[number]["id"]>("upload");
   const [canvasZoom, setCanvasZoom] = useState(1);
   const [studioReady, setStudioReady] = useState(false);
+  const [tourWelcomeOpen, setTourWelcomeOpen] = useState(false);
   const { isProcessing, modelError, processingError, removeBackground } = useSegmentation();
 
   const physicalPhoto = useMemo(() => toPhysicalSize(photoSize), [photoSize]);
@@ -270,6 +277,139 @@ export function StudioPrintApp() {
     });
   }, []);
 
+  const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
+    if (!sectionId) return;
+    setActiveSection(sectionId);
+    const rail = controlRailRef.current;
+    const section = document.getElementById(sectionId);
+    if (!rail || !section) return;
+    rail.scrollTo({ top: section.offsetTop, behavior: "auto" });
+  }, []);
+
+  const createTourStep = useCallback(
+    ({
+      element,
+      title,
+      description,
+      sectionId,
+      side = "right",
+      align = "start",
+    }: {
+      element: string;
+      title: string;
+      description: string;
+      sectionId?: (typeof workflowSections)[number]["id"];
+      side?: "top" | "right" | "bottom" | "left" | "over";
+      align?: "start" | "center" | "end";
+    }): DriveStep => ({
+      element,
+      onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
+        scrollTourTargetIntoView(sectionId);
+        window.requestAnimationFrame(() => tourDriver.refresh());
+      },
+      popover: {
+        title,
+        description,
+        side,
+        align,
+      },
+    }),
+    [scrollTourTargetIntoView],
+  );
+
+  const startStudioTour = useCallback(() => {
+    if (!studioReady || typeof window === "undefined") return;
+
+    setTourWelcomeOpen(false);
+    tourRef.current?.destroy();
+
+    const steps: DriveStep[] = [
+      createTourStep({
+        element: "#upload",
+        sectionId: "upload",
+        title: "Upload a photo",
+        description: "Drop a JPG, PNG, or WEBP here. The file stays in your browser.",
+      }),
+      createTourStep({
+        element: "#background",
+        sectionId: "background",
+        title: "Remove the background",
+        description: "Run local background removal, then pick a solid or transparent background.",
+      }),
+      createTourStep({
+        element: "#photo-size",
+        sectionId: "photo-size",
+        title: "Set photo size",
+        description: "Choose the required dimensions, unit, and DPI for the final print.",
+      }),
+      createTourStep({
+        element: "#crop",
+        sectionId: "crop",
+        title: "Adjust framing",
+        description: "Use crop controls to center the face and fine tune the final composition.",
+      }),
+      createTourStep({
+        element: "#sheet",
+        sectionId: "sheet",
+        title: "Build the sheet",
+        description: "Select paper size, orientation, margins, gaps, and copy layout.",
+      }),
+      createTourStep({
+        element: "#export",
+        sectionId: "export",
+        title: "Export or print",
+        description: "When the preview is ready, export a PNG/PDF or send it to print.",
+      }),
+    ];
+
+    const tour = driver({
+      steps,
+      animate: false,
+      allowClose: true,
+      allowKeyboardControl: true,
+      disableActiveInteraction: false,
+      overlayColor: "#111827",
+      overlayOpacity: 0.36,
+      popoverClass: "chitra-tour-popover",
+      popoverOffset: 10,
+      showProgress: true,
+      nextBtnText: "Next",
+      prevBtnText: "Back",
+      doneBtnText: "Done",
+      progressText: "{{current}} of {{total}}",
+      onDestroyed: () => {
+        tourRef.current = null;
+      },
+    });
+
+    tourRef.current = tour;
+    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    tour.drive();
+  }, [createTourStep, studioReady]);
+
+  const dismissTourWelcome = useCallback(() => {
+    setTourWelcomeOpen(false);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!studioReady || autoTourStartedRef.current || typeof window === "undefined") return;
+    if (window.localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
+
+    autoTourStartedRef.current = true;
+    const tourTimer = window.setTimeout(() => setTourWelcomeOpen(true), 450);
+    return () => window.clearTimeout(tourTimer);
+  }, [studioReady]);
+
+  useEffect(() => {
+    return () => {
+      tourRef.current?.destroy();
+      tourRef.current = null;
+    };
+  }, []);
+
   const toggleFullscreen = useCallback(() => {
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
@@ -327,6 +467,9 @@ export function StudioPrintApp() {
               <span className="github-star-text">Star on GitHub</span>
             </a>
             <span className="topbar-action-sep" />
+            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+              <HelpCircle size={16} />
+            </button>
             <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
           </div>
         </div>
@@ -476,6 +619,27 @@ export function StudioPrintApp() {
         onReset={resetManualCleanup}
         onClose={() => setCleanupModalOpen(false)}
       />
+      {tourWelcomeOpen ? (
+        <div className="tour-welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="tour-welcome-title">
+          <div className="tour-welcome">
+            <span className="tour-welcome-mark">
+              <Image src="/logo.png" width={34} height={34} alt="" aria-hidden="true" />
+            </span>
+            <div>
+              <h2 id="tour-welcome-title">Welcome to Chitra Studio</h2>
+              <p>A short guide can walk you through uploading, background removal, sizing, layout, and export.</p>
+            </div>
+            <div className="tour-welcome-actions">
+              <button type="button" className="secondary-action" onClick={dismissTourWelcome}>
+                Skip
+              </button>
+              <button type="button" className="primary-action tour-start-action" onClick={startStudioTour}>
+                Start tour
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
