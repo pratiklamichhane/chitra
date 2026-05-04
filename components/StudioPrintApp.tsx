@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -293,7 +294,9 @@ export function StudioPrintApp() {
     <div ref={appShellRef} className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark">CH</span>
+          <span className="brand-mark">
+            <Image src="/logo.png" width={28} height={28} alt="Chitra" priority />
+          </span>
           <div>
             <strong>Chitra</strong>
             <span>Professional Photo Layout</span>

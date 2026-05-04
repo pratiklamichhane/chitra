@@ -21,11 +21,10 @@ type BackgroundProcessorProps = {
 };
 
 const processingFacts = [
-  "Your photo stays in this browser while the model works.",
-  "Transparent exports keep the cutout ready for any background.",
-  "A small feather value helps soften hair and fabric edges.",
-  "Clean, even lighting usually gives the AI a sharper subject mask.",
-  "Manual cleanup is available after processing for fine edge fixes.",
+  "Photos are processed locally in your browser.",
+  "Edge feathering helps soften hair and fabric boundaries.",
+  "Even lighting usually creates a cleaner subject mask.",
+  "Manual cleanup is available after processing.",
 ];
 
 export function BackgroundProcessor({
@@ -43,19 +42,6 @@ export function BackgroundProcessor({
   onProcess,
   onToggleBeforeAfter,
 }: BackgroundProcessorProps) {
-  const [factIndex, setFactIndex] = useState(0);
-  const displayFactIndex = isProcessing ? factIndex : 0;
-
-  useEffect(() => {
-    if (!isProcessing) return;
-
-    const timer = window.setInterval(() => {
-      setFactIndex((current) => (current + 1) % processingFacts.length);
-    }, 3200);
-
-    return () => window.clearInterval(timer);
-  }, [isProcessing]);
-
   return (
     <section className="fluent-card">
       <div className="section-title">
@@ -74,20 +60,7 @@ export function BackgroundProcessor({
           After
         </button>
       </div>
-      {isProcessing ? (
-        <div className="processing-insight">
-          <div className="processing-insight-head">
-            <span className="processing-pulse" />
-            <strong>While background removal runs</strong>
-          </div>
-          <p>{processingFacts[displayFactIndex]}</p>
-          <div className="processing-fact-dots" aria-hidden="true">
-            {processingFacts.map((fact, index) => (
-              <span key={fact} className={index === displayFactIndex ? "active" : undefined} />
-            ))}
-          </div>
-        </div>
-      ) : null}
+      {isProcessing ? <ProcessingInsight /> : null}
       <div className="swatch-grid">
         {backgroundOptions.map((option) => (
           <button
@@ -127,5 +100,34 @@ export function BackgroundProcessor({
       <input className="range" type="range" min={0} max={2} step={0.1} value={feather} onChange={(event) => onFeatherChange(Number(event.target.value))} />
       {error ? <p className="inline-error">{error}</p> : null}
     </section>
+  );
+}
+
+function ProcessingInsight() {
+  const [visible, setVisible] = useState(false);
+  const [factIndex, setFactIndex] = useState(0);
+
+  useEffect(() => {
+    const infoTimer = window.setTimeout(() => setVisible(true), 1800);
+    const factTimer = window.setInterval(() => {
+      setFactIndex((current) => (current + 1) % processingFacts.length);
+    }, 3200);
+
+    return () => {
+      window.clearTimeout(infoTimer);
+      window.clearInterval(factTimer);
+    };
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div className="processing-insight">
+      <div className="processing-insight-head">
+        <Loader2 className="animate-spin" size={13} />
+        <strong>Still working</strong>
+      </div>
+      <p>{processingFacts[factIndex]}</p>
+    </div>
   );
 }
