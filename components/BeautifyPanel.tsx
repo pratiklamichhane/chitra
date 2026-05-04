@@ -12,7 +12,7 @@ export function BeautifyPanel({ enabled, strength, hasImage, onEnabledChange, on
   return (
     <section className="fluent-card">
       <div className="section-title">
-        <span>2. Beautify</span>
+        <span><span className="step-number">2.</span> Beautify</span>
         <Sparkles size={15} />
       </div>
       <label className="switch-row">

@@ -495,7 +495,7 @@ export function StudioPrintApp() {
 
         <aside ref={controlRailRef} className="control-rail">
           <div id="upload" data-section="upload"><ImageUploader fileName={fileName} imageUrl={imageUrl} onImage={handleImage} /></div>
-          <div id="beautify" data-section="beautify">
+          <div id="beautify" className="mobile-optional-section" data-section="beautify">
             <BeautifyPanel
               enabled={beautifyEnabled}
               strength={beautifyStrength}
@@ -521,7 +521,7 @@ export function StudioPrintApp() {
               onToggleBeforeAfter={() => setBeforeView((value) => !value)}
             />
           </div>
-          <div id="cleanup" data-section="cleanup">
+          <div id="cleanup" className="mobile-optional-section" data-section="cleanup">
             <ManualCleanupTrigger
               hasSubject={Boolean(subjectCanvas)}
               onOpen={() => setCleanupModalOpen(true)}
@@ -569,7 +569,7 @@ export function StudioPrintApp() {
               }}
             />
           </div>
-          <div id="export" data-section="export"><ExportPanel canExport={canExport} onExportPng={exportPng} onExportPdf={exportPdf} onPrint={print} /></div>
+          <div id="export" className="mobile-optional-section" data-section="export"><ExportPanel canExport={canExport} onExportPng={exportPng} onExportPdf={exportPdf} onPrint={print} /></div>
         </aside>
 
         <PreviewCanvas
@@ -591,9 +591,9 @@ export function StudioPrintApp() {
           <span>{layout.count} copies · {layout.cols} columns · {layout.rows} rows</span>
         </div>
         <div className="zoom-dock footer-zoom-dock" style={canvasControlStyle} aria-label="Canvas view controls">
-          <button type="button" className="selected" title="Drag photo"><Hand size={17} /></button>
-          <button type="button" title="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
-          <span className="dock-divider" />
+          <button type="button" className="selected mobile-zoom-secondary" title="Drag photo"><Hand size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" title="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
+          <span className="dock-divider mobile-zoom-secondary" />
           <button type="button" title="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
           <input
             className="zoom-track"
@@ -607,8 +607,8 @@ export function StudioPrintApp() {
           />
           <strong>{canvasScaleLabel}</strong>
           <button type="button" title="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
-          <span className="dock-divider" />
-          <button type="button" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
+          <span className="dock-divider mobile-zoom-secondary" />
+          <button type="button" className="mobile-zoom-secondary" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
         </div>
       </footer>
 

@@ -45,7 +45,7 @@ export function BackgroundProcessor({
   return (
     <section className="fluent-card">
       <div className="section-title">
-        <span>3. Background</span>
+        <span><span className="step-number">3.</span> Background</span>
         <Eraser size={15} />
       </div>
       <button className="primary-action w-full" disabled={!hasImage || isProcessing} onClick={onProcess}>

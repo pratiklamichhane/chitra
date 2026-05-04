@@ -9,7 +9,7 @@ export function ManualCleanupTrigger({ hasSubject, onOpen }: ManualCleanupTrigge
   return (
     <section className="fluent-card">
       <div className="section-title">
-        <span>4. Manual Cleanup</span>
+        <span><span className="step-number">4.</span> Manual Cleanup</span>
       </div>
       <div className="cleanup-trigger-container">
         {!hasSubject ? (
