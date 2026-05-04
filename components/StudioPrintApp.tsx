@@ -23,7 +23,8 @@ import { CropPanel } from "./CropPanel";
 import { ExportPanel } from "./ExportPanel";
 import { ImageUploader } from "./ImageUploader";
 import { LayoutPanel } from "./LayoutPanel";
-import { ManualCleanupPanel } from "./ManualCleanupPanel";
+import { ManualCleanupModal } from "./ManualCleanupModal";
+import { ManualCleanupTrigger } from "./ManualCleanupTrigger";
 import { PhotoSizePanel } from "./PhotoSizePanel";
 import { PreviewCanvas } from "./PreviewCanvas";
 import { SheetPanel } from "./SheetPanel";
@@ -66,6 +67,7 @@ export function StudioPrintApp() {
   const [subjectCanvas, setSubjectCanvas] = useState<HTMLCanvasElement | null>(null);
   const [renderedSheet, setRenderedSheet] = useState<HTMLCanvasElement | null>(null);
   const [beforeView, setBeforeView] = useState(false);
+  const [cleanupModalOpen, setCleanupModalOpen] = useState(false);
   const [beautifyEnabled, setBeautifyEnabled] = useState(false);
   const [beautifyStrength, setBeautifyStrength] = useState(35);
   const [background, setBackground] = useState("white");
@@ -338,10 +340,9 @@ export function StudioPrintApp() {
             />
           </div>
           <div id="cleanup" data-section="cleanup">
-            <ManualCleanupPanel
-              subjectCanvas={subjectCanvas}
-              onChange={updateManualCleanup}
-              onReset={resetManualCleanup}
+            <ManualCleanupTrigger
+              hasSubject={Boolean(subjectCanvas)}
+              onOpen={() => setCleanupModalOpen(true)}
             />
           </div>
           <div id="photo-size" data-section="photo-size">
@@ -428,6 +429,14 @@ export function StudioPrintApp() {
           <button type="button" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
         </div>
       </footer>
+
+      <ManualCleanupModal
+        isOpen={cleanupModalOpen}
+        subjectCanvas={subjectCanvas}
+        onChange={updateManualCleanup}
+        onReset={resetManualCleanup}
+        onClose={() => setCleanupModalOpen(false)}
+      />
     </div>
   );
 }
