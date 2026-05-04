@@ -279,17 +279,11 @@ export function StudioPrintApp() {
     <div ref={appShellRef} className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-mark">SP</span>
+          <span className="brand-mark">CH</span>
           <div>
-            <strong>StudioPrint</strong>
+            <strong>Chitra</strong>
             <span>Professional Photo Layout</span>
           </div>
-        </div>
-        <div className="header-summary" aria-label="Studio status">
-          <span>{photoSize.width} x {photoSize.height} {photoSize.unit}</span>
-          <span>{photoSize.dpi} DPI</span>
-          <span>{formatMm(activeSheet.widthMm)} x {formatMm(activeSheet.heightMm)} sheet</span>
-          <span>{layout.count} copies</span>
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">

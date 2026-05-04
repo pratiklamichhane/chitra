@@ -17,8 +17,9 @@ export function BeautifyPanel({ enabled, strength, hasImage, onEnabledChange, on
       </div>
       <label className="switch-row">
         <span>
-          <strong>Beautify face</strong>
-          <small>Softens skin tones while keeping the photo local.</small>
+          <small>
+            Apply a beautify filter to smooth imperfections and enhance the image.
+          </small>
         </span>
         <input
           type="checkbox"

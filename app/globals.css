@@ -79,21 +79,19 @@ select:focus {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) 64px;
   border: 1px solid #d2d6de;
-  border-radius: 15px;
+  border-radius: 0;
   background: #fff;
 }
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(220px, 1fr) auto;
   align-items: center;
-  gap: 18px;
-  padding: 10px 22px 10px 20px;
-  min-height: 76px;
+  gap: 14px;
+  padding: 6px 22px 6px 20px;
+  min-height: 58px;
   border-bottom: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 12% -120%, rgba(15, 98, 214, 0.14) 0%, rgba(15, 98, 214, 0) 56%),
-    #ffffff;
+  background: #ffffff;
 }
 
 .brand {
@@ -106,59 +104,30 @@ select:focus {
 .brand-mark {
   display: grid;
   place-items: center;
-  width: 39px;
-  height: 39px;
+  width: 34px;
+  height: 34px;
   border-radius: 7px;
   background: #0f62d6;
   color: white;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.3px;
   box-shadow: 0 5px 14px rgba(15, 98, 214, 0.2);
 }
 
 .brand strong {
   display: block;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 730;
   line-height: 1.05;
 }
 
 .brand span:not(.brand-mark) {
   display: block;
-  margin-top: 7px;
+  margin-top: 4px;
   color: #596576;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1;
-}
-
-.header-summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, auto));
-  justify-content: center;
-  align-items: center;
-  gap: 9px;
-  min-width: 0;
-  color: #656f7f;
-  font-size: 12px;
-}
-
-.header-summary span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  max-width: 190px;
-  height: 30px;
-  overflow: hidden;
-  border: 1px solid #d7ddea;
-  border-radius: 999px;
-  background: linear-gradient(180deg, #f9fbff 0%, #f3f6fd 100%);
-  padding: 0 10px;
-  color: #35465f;
-  font-weight: 560;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .topbar-status {
@@ -1023,13 +992,8 @@ label span,
   }
 
   .topbar {
-    grid-template-columns: minmax(230px, 1fr) minmax(0, 1.2fr) auto;
-    min-height: 72px;
-  }
-
-  .header-summary {
-    grid-template-columns: repeat(2, minmax(0, auto));
-    justify-content: end;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 56px;
   }
 
   .studio-layout {
@@ -1049,20 +1013,13 @@ label span,
 @media (max-width: 760px) {
   .topbar {
     grid-template-columns: minmax(0, 1fr) auto;
-    padding: 12px;
-    gap: 10px;
+    padding: 8px 12px;
+    gap: 8px;
     min-height: 0;
   }
 
-  .header-summary {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    justify-content: stretch;
-  }
-
   .topbar-status {
-    align-self: start;
+    align-self: center;
     justify-content: end;
   }
 
