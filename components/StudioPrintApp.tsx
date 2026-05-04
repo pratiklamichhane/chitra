@@ -306,13 +306,13 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" onClick={exportPng}>
+            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" onClick={exportPdf}>
+            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" onClick={print}>
+            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />

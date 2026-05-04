@@ -498,6 +498,18 @@ select:focus {
   background: var(--blue-strong);
 }
 
+.export-grid button:hover:not(:disabled) {
+  border-color: #c8d2e3;
+  background: #eef3fb;
+  color: #0f62d6;
+}
+
+.export-grid .primary-action:hover:not(:disabled) {
+  border-color: rgba(15, 98, 214, 0.5);
+  background: var(--blue-strong);
+  color: #ffffff;
+}
+
 .icon-button {
   width: 29px;
   min-height: 29px;
