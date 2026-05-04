@@ -249,78 +249,62 @@ select:focus {
   display: grid;
   place-items: center;
   overflow: hidden;
-  background: #f4f6f9;
+  background: #ffffff;
   padding: 24px;
 }
 
 .studio-loader-panel {
-  width: min(300px, 100%);
+  width: 180px;
   display: grid;
-  gap: 16px;
+  gap: 12px;
   justify-items: center;
-  padding: 20px;
+  padding: 0;
 }
 
 .studio-loader-mark {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
 }
 
 .studio-loader-mark img {
   display: block;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
-.studio-loader-copy {
-  text-align: center;
-}
-
-.studio-loader-copy strong {
-  display: block;
-  color: #202632;
-  font-size: 18px;
-  font-weight: 740;
-  line-height: 1.15;
-}
-
-.studio-loader-copy p {
-  max-width: 320px;
-  margin: 7px auto 0;
+.studio-loader-label {
+  margin: 0;
   color: #647084;
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1;
 }
 
 .studio-loader-bar {
-  width: 160px;
-  height: 3px;
+  width: 96px;
+  height: 2px;
   overflow: hidden;
   border-radius: 999px;
-  background: #dfe3e9;
+  background: #e5e7eb;
 }
 
 .studio-loader-bar span {
   display: block;
-  width: 44%;
+  width: 32px;
   height: 100%;
   border-radius: inherit;
-  background: #0f62d6;
-  animation: loaderBar 1300ms ease-in-out infinite;
+  background: #202632;
+  animation: loaderBar 1200ms ease-in-out infinite;
 }
 
 @keyframes loaderBar {
   0% {
-    transform: translateX(-110%);
-  }
-  55% {
-    transform: translateX(95%);
+    transform: translateX(-34px);
   }
   100% {
-    transform: translateX(250%);
+    transform: translateX(98px);
   }
 }
 
@@ -550,21 +534,21 @@ select:focus {
 
 .processing-insight {
   display: grid;
-  gap: 6px;
-  margin-top: 10px;
-  border-left: 2px solid #cbd7ec;
-  padding: 2px 0 2px 10px;
+  gap: 5px;
+  margin-top: 8px;
+  border-left: 2px solid #d5dae2;
+  padding: 1px 0 1px 9px;
 }
 
 .processing-insight-head {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #475569;
+  color: #536176;
 }
 
 .processing-insight-head strong {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -573,7 +557,7 @@ select:focus {
   min-height: 17px;
   margin: 0;
   color: #5f6b7d;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1.4;
 }
 

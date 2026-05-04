@@ -299,7 +299,9 @@ export function StudioPrintApp() {
           </span>
           <div>
             <strong>Chitra</strong>
-            <span>Professional Photo Layout</span>
+            <span>
+              Studio
+            </span>
           </div>
         </div>
         <div className="topbar-status">

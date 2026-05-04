@@ -21,10 +21,10 @@ type BackgroundProcessorProps = {
 };
 
 const processingFacts = [
-  "Photos are processed locally in your browser.",
-  "Edge feathering helps soften hair and fabric boundaries.",
-  "Even lighting usually creates a cleaner subject mask.",
-  "Manual cleanup is available after processing.",
+  "Your photo stays on this device while Chitra works.",
+  "Soft edges help hair and fabric look more natural.",
+  "Even lighting usually creates a cleaner cutout.",
+  "You can refine tricky edges with Manual Cleanup next.",
 ];
 
 export function BackgroundProcessor({
@@ -52,6 +52,7 @@ export function BackgroundProcessor({
         {isProcessing ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
         {isProcessing ? "Removing background" : "Remove background"}
       </button>
+      {isProcessing ? <ProcessingInsight /> : null}
       <div className="segmented mt-3">
         <button className={beforeAfter ? "selected" : ""} disabled={!hasProcessedImage} onClick={onToggleBeforeAfter}>
           Before
@@ -60,7 +61,6 @@ export function BackgroundProcessor({
           After
         </button>
       </div>
-      {isProcessing ? <ProcessingInsight /> : null}
       <div className="swatch-grid">
         {backgroundOptions.map((option) => (
           <button
@@ -125,7 +125,7 @@ function ProcessingInsight() {
     <div className="processing-insight">
       <div className="processing-insight-head">
         <Loader2 className="animate-spin" size={13} />
-        <strong>Still working</strong>
+        <strong>Quick note</strong>
       </div>
       <p>{processingFacts[factIndex]}</p>
     </div>
