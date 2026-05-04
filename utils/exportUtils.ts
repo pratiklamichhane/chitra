@@ -27,22 +27,27 @@ export async function canvasToPdf(
 
 export function printCanvas(canvas: HTMLCanvasElement) {
   const dataUrl = canvas.toDataURL("image/png", 1);
-  const win = window.open("", "_blank", "noopener,noreferrer");
-  if (!win) return;
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert("Please allow popups to use the print feature.");
+    return;
+  }
   win.document.write(`
+    <!DOCTYPE html>
     <html>
       <head>
-        <title>StudioPrint</title>
+        <title>Print Sheet - Chitra</title>
         <style>
           @page { margin: 0; }
-          html, body { margin: 0; min-height: 100%; background: white; }
-          img { width: 100%; height: auto; display: block; }
+          html, body { margin: 0; padding: 0; background: white; }
+          img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
         </style>
       </head>
-      <body><img src="${dataUrl}" alt="Print sheet" /></body>
+      <body>
+        <img src="${dataUrl}" alt="Print sheet" onload="window.print();" />
+      </body>
     </html>
   `);
   win.document.close();
   win.focus();
-  win.print();
 }
