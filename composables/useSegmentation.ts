@@ -9,6 +9,19 @@ type SegmentationResult = {
   subjectCanvas: HTMLCanvasElement;
 };
 
+function waitForProcessingPaint() {
+  return new Promise<void>((resolve) => {
+    if (typeof window === "undefined" || typeof window.requestAnimationFrame !== "function") {
+      setTimeout(resolve, 0);
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => resolve());
+    });
+  });
+}
+
 function canvasToModnetTensor(canvas: HTMLCanvasElement, ort: typeof import("onnxruntime-web")) {
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas is not available in this browser.");
@@ -45,6 +58,7 @@ export function useSegmentation() {
       setIsProcessing(true);
       setProcessingError(null);
       try {
+        await waitForProcessingPaint();
         const [session, ort] = await Promise.all([loadModel(), import("onnxruntime-web")]);
         const sourceCanvas = imageToCanvas(image);
         const inferenceCanvas = resizeImageForInference(sourceCanvas, 1024);
