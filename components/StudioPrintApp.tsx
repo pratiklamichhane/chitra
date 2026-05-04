@@ -6,6 +6,7 @@ import {
   Expand,
   Eraser,
   ExternalLink,
+  Star,
   Grid2X2,
   Hand,
   Images,
@@ -31,6 +32,7 @@ import { ManualCleanupTrigger } from "./ManualCleanupTrigger";
 import { PhotoSizePanel } from "./PhotoSizePanel";
 import { PreviewCanvas } from "./PreviewCanvas";
 import { SheetPanel } from "./SheetPanel";
+import { StudioLoading } from "./StudioLoading";
 import { useSegmentation } from "@/composables/useSegmentation";
 import type { BackgroundFill, CropState } from "@/composables/useCanvasRenderer";
 import { beautifyCanvas, imageToCanvas } from "@/composables/useCanvasRenderer";
@@ -90,6 +92,7 @@ export function StudioPrintApp() {
   const [manualCols, setManualCols] = useState(4);
   const [activeSection, setActiveSection] = useState<(typeof workflowSections)[number]["id"]>("upload");
   const [canvasZoom, setCanvasZoom] = useState(1);
+  const [studioReady, setStudioReady] = useState(false);
   const { isProcessing, modelError, processingError, removeBackground } = useSegmentation();
 
   const physicalPhoto = useMemo(() => toPhysicalSize(photoSize), [photoSize]);
@@ -156,6 +159,11 @@ export function StudioPrintApp() {
     });
   }, []);
 
+  useEffect(() => {
+    const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
+    return () => window.clearTimeout(readyTimer);
+  }, []);
+
   const handleImage = useCallback((file: File, image: HTMLImageElement, url: string) => {
     setFileName(file.name);
     setImageUrl((previous) => {
@@ -171,6 +179,8 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (!studioReady) return;
+
     const rail = controlRailRef.current;
     if (!rail) return;
 
@@ -201,7 +211,7 @@ export function StudioPrintApp() {
       rail.removeEventListener("scroll", scheduleUpdate);
       if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
     };
-  }, []);
+  }, [studioReady]);
 
   const handleBeautifyEnabled = useCallback((value: boolean) => {
     setBeautifyEnabled(value);
@@ -275,6 +285,10 @@ export function StudioPrintApp() {
     else void shell.webkitRequestFullscreen?.();
   }, []);
 
+  if (!studioReady) {
+    return <StudioLoading />;
+  }
+
   return (
     <div ref={appShellRef} className="app-shell">
       <header className="topbar">
@@ -296,6 +310,17 @@ export function StudioPrintApp() {
             <button className="chrome-button" title="Print" onClick={print}>
               <Printer size={16} />
             </button>
+            <span className="topbar-action-sep" />
+            <a 
+              href="https://github.com/pratiklamichhane/chitra" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="chrome-button github-star-link" 
+              title="Star on GitHub"
+            >
+              <Star size={16} />
+              <span className="github-star-text">Star on GitHub</span>
+            </a>
             <span className="topbar-action-sep" />
             <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
           </div>
