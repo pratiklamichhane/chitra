@@ -101,6 +101,7 @@ export function StudioPrintApp() {
   const [canvasZoom, setCanvasZoom] = useState(1);
   const [studioReady, setStudioReady] = useState(false);
   const [tourWelcomeOpen, setTourWelcomeOpen] = useState(false);
+  const [showMobileWarning, setShowMobileWarning] = useState(false);
   const { isProcessing, modelError, processingError, removeBackground } = useSegmentation();
 
   const physicalPhoto = useMemo(() => toPhysicalSize(photoSize), [photoSize]);
@@ -170,6 +171,15 @@ export function StudioPrintApp() {
   useEffect(() => {
     const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
     return () => window.clearTimeout(readyTimer);
+  }, []);
+
+  useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 760px)");
+    const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
+
+    updateMobileWarning();
+    mobileQuery.addEventListener("change", updateMobileWarning);
+    return () => mobileQuery.removeEventListener("change", updateMobileWarning);
   }, []);
 
   const handleImage = useCallback((file: File, image: HTMLImageElement, url: string) => {
@@ -476,6 +486,25 @@ export function StudioPrintApp() {
       </header>
 
       <main className="studio-layout">
+        {showMobileWarning ? (
+          <div
+            role="note"
+            style={{
+              display: "grid",
+              gap: 4,
+              borderBottom: "1px solid #d7e0ee",
+              background: "#f1f6ff",
+              color: "#22314a",
+              padding: "10px 16px",
+            }}
+          >
+            <strong style={{ fontSize: 13, fontWeight: 760, lineHeight: 1.2 }}>Mobile preview is limited</strong>
+            <span style={{ color: "#536176", fontSize: 12, lineHeight: 1.35 }}>
+              Chitra is optimized for laptop or desktop. Explore from desktop for more features and a better editing workspace.
+            </span>
+          </div>
+        ) : null}
+
         <nav className="workflow-rail" aria-label="Workflow">
           {workflowSections.map(({ id, label, icon: Icon }) => (
             <a
