@@ -18,7 +18,7 @@ export function ManualCleanupTrigger({ hasSubject, onOpen }: ManualCleanupTrigge
             <span>Remove background first</span>
           </div>
         ) : (
-          <button className="cleanup-open-button" onClick={onOpen} title="Open cleanup modal">
+          <button className="cleanup-open-button" onClick={onOpen} title="Open cleanup modal" aria-label="Open cleanup modal">
             <Eraser size={20} />
             <span>Open Cleanup Tool</span>
           </button>
