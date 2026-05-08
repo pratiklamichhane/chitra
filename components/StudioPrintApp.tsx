@@ -456,13 +456,13 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+            <button className="chrome-button" aria-label="Export PNG" title="Export PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+            <button className="chrome-button" aria-label="Export PDF" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
+            <button className="chrome-button" aria-label="Print" title="Print" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
@@ -477,10 +477,10 @@ export function StudioPrintApp() {
               <span className="github-star-text">Star on GitHub</span>
             </a>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" aria-label="Show tour" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" aria-label="Fullscreen" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
           </div>
         </div>
       </header>
@@ -620,10 +620,10 @@ export function StudioPrintApp() {
           <span>{layout.count} copies · {layout.cols} columns · {layout.rows} rows</span>
         </div>
         <div className="zoom-dock footer-zoom-dock" style={canvasControlStyle} aria-label="Canvas view controls">
-          <button type="button" className="selected mobile-zoom-secondary" title="Drag photo"><Hand size={17} /></button>
-          <button type="button" className="mobile-zoom-secondary" title="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
+          <button type="button" className="selected mobile-zoom-secondary" aria-label="Drag photo" title="Drag photo"><Hand size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" aria-label="Fit canvas" title="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
           <span className="dock-divider mobile-zoom-secondary" />
-          <button type="button" title="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
+          <button type="button" aria-label="Zoom out" title="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
           <input
             className="zoom-track"
             type="range"
@@ -635,9 +635,9 @@ export function StudioPrintApp() {
             aria-label="Canvas zoom"
           />
           <strong>{canvasScaleLabel}</strong>
-          <button type="button" title="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
+          <button type="button" aria-label="Zoom in" title="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
           <span className="dock-divider mobile-zoom-secondary" />
-          <button type="button" className="mobile-zoom-secondary" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" aria-label="Fill view" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
         </div>
       </footer>
 

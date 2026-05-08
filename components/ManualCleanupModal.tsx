@@ -269,7 +269,7 @@ export function ManualCleanupModal({
             <Eraser size={20} />
             <span className="modal-title">Manual Background Cleanup</span>
           </div>
-          <button className="modal-close-button" onClick={handleClose} title="Close">
+          <button className="modal-close-button" aria-label="Close" onClick={handleClose} title="Close">
             <X size={20} />
           </button>
         </div>
@@ -336,13 +336,13 @@ export function ManualCleanupModal({
 
           <div className="cleanup-controls">
             <div className="cleanup-toolbar">
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)} title="Zoom out">
+              <button type="button" className="icon-button" aria-label="Zoom out" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)} title="Zoom out">
                 <ZoomOut size={15} />
               </button>
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom(1)} title="Fit view">
+              <button type="button" className="icon-button" aria-label="Fit view" disabled={!hasSubject} onClick={() => updateViewZoom(1)} title="Fit view">
                 <Maximize size={15} />
               </button>
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)} title="Zoom in">
+              <button type="button" className="icon-button" aria-label="Zoom in" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)} title="Zoom in">
                 <ZoomIn size={15} />
               </button>
               <strong>{zoomLabel}</strong>
@@ -350,6 +350,7 @@ export function ManualCleanupModal({
               <div className="mode-toggle">
                 <button
                   className={`mode-button ${mode === "erase" ? "active" : ""}`}
+                  aria-label="Erase"
                   onClick={() => setMode("erase")}
                   title="Erase"
                 >
@@ -358,6 +359,7 @@ export function ManualCleanupModal({
                 </button>
                 <button
                   className={`mode-button ${mode === "recover" ? "active" : ""}`}
+                  aria-label="Recover"
                   onClick={() => setMode("recover")}
                   title="Recover"
                 >
