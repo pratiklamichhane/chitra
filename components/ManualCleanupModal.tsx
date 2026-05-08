@@ -350,7 +350,6 @@ export function ManualCleanupModal({
               <div className="mode-toggle">
                 <button
                   className={`mode-button ${mode === "erase" ? "active" : ""}`}
-                  aria-label="Erase"
                   onClick={() => setMode("erase")}
                   title="Erase"
                 >
@@ -359,7 +358,6 @@ export function ManualCleanupModal({
                 </button>
                 <button
                   className={`mode-button ${mode === "recover" ? "active" : ""}`}
-                  aria-label="Recover"
                   onClick={() => setMode("recover")}
                   title="Recover"
                 >
