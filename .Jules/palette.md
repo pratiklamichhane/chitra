@@ -1,0 +1,3 @@
+## 2024-05-10 - Adding ARIA labels to Icon-Only Buttons
+**Learning:** Found multiple icon-only buttons using `title` attributes but lacking `aria-label`. While `title` gives mouse hover tips, it does not reliably substitute for `aria-label` across all screen readers (missing WCAG 4.1.2 requirements). Also learned that buttons with visible text shouldn't have an `aria-label` overriding it due to WCAG 2.5.3.
+**Action:** Applied missing `aria-label` to these components while preserving the `title` for visual users. Remember to only apply this to buttons containing purely icons and lacking visible inline text to prevent breaking Voice Control users' interaction matching.
