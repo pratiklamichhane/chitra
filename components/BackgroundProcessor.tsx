@@ -68,6 +68,7 @@ export function BackgroundProcessor({
             className={`color-swatch ${activeBackground === option.id ? "selected" : ""}`}
             onClick={() => onBackgroundChange(option.id)}
             title={option.label}
+            aria-label={option.label}
           >
             <span
               style={{
