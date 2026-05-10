@@ -1,3 +1,0 @@
-## 2024-05-15 - [ARIA Labels for Icon-Only Buttons]
-**Learning:** Only use `aria-label` for icon-only buttons to ensure accessibility for screen readers. Avoid adding `aria-label` to elements that already contain visible text (e.g., in a `<span>`), as this overrides the visible text and violates WCAG SC 2.5.3 (Label in Name) for voice control users.
-**Action:** Always add explicit `aria-label` attributes to icon-only buttons, but skip `aria-label` if the button or its content already provides visible text.
