@@ -1,0 +1,3 @@
+## 2024-05-11 - Add ARIA Labels to Icon-Only Buttons
+**Learning:** Found several icon-only buttons across components like `StudioPrintApp.tsx`, `ManualCleanupModal.tsx`, `ManualCleanupPanel.tsx`, `CropPanel.tsx`, `ManualCleanupTrigger.tsx`, and `ImageUploader.tsx` missing explicit `aria-label` attributes. This reduces accessibility for screen reader users since the icon itself isn't sufficient context. Adding `aria-label` where a visible title exists ensures alignment between visual tooltips and screen reader announcements.
+**Action:** Always verify icon-only interactive elements contain `aria-label` for screen reader accessibility, even if a generic HTML `title` attribute is present, because some screen readers don't reliably announce `title`.
