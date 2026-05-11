@@ -77,7 +77,7 @@ export function ManualCleanupPanel({ subjectCanvas, onChange, onReset }: ManualC
     <section className="fluent-card">
       <div className="section-title">
         <span>4. Manual Cleanup</span>
-        <button className="icon-button" disabled={!hasSubject} onClick={onReset} title="Reset cleanup">
+        <button className="icon-button" disabled={!hasSubject} onClick={onReset} title="Reset cleanup" aria-label="Reset cleanup">
           <RotateCcw size={15} />
         </button>
       </div>
