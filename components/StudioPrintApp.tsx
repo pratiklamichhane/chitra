@@ -9,13 +9,13 @@ import {
   Eraser,
   ExternalLink,
   HelpCircle,
-  Star,
   Grid2X2,
   Hand,
   Images,
   Maximize,
   Maximize2,
   Printer,
+  Save,
   DownloadCloud,
   FileText,
   Minus,
@@ -36,7 +36,11 @@ import { PhotoSizePanel } from "./PhotoSizePanel";
 import { PreviewCanvas } from "./PreviewCanvas";
 import { SheetPanel } from "./SheetPanel";
 import { StudioLoading } from "./StudioLoading";
+import { UserMenu } from "./UserMenu";
+import { CustomerPhotosPanel } from "./CustomerPhotosPanel";
+import { SaveCustomerModal } from "./SaveCustomerModal";
 import { useSegmentation } from "@/composables/useSegmentation";
+import type { CustomerPhoto } from "@/lib/auth";
 import type { BackgroundFill, CropState } from "@/composables/useCanvasRenderer";
 import { beautifyCanvas, imageToCanvas } from "@/composables/useCanvasRenderer";
 import { calculateLayout, type LayoutMode, type Orientation } from "@/composables/useLayoutEngine";
@@ -60,6 +64,7 @@ const workflowSections = [
   { id: "photo-size", label: "Photo Size", icon: SquareDashed },
   { id: "crop", label: "Crop", icon: CropIcon },
   { id: "sheet", label: "Sheet Layout", icon: Grid2X2 },
+  { id: "cloud", label: "Cloud Save", icon: UploadCloud },
   { id: "export", label: "Export", icon: ExternalLink },
 ] as const;
 
@@ -102,6 +107,8 @@ export function StudioPrintApp() {
   const [studioReady, setStudioReady] = useState(false);
   const [tourWelcomeOpen, setTourWelcomeOpen] = useState(false);
   const [showMobileWarning, setShowMobileWarning] = useState(false);
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
+  const [currentImageBlob, setCurrentImageBlob] = useState<Blob | null>(null);
   const { isProcessing, modelError, processingError, removeBackground } = useSegmentation();
 
   const physicalPhoto = useMemo(() => toPhysicalSize(photoSize), [photoSize]);
@@ -195,6 +202,34 @@ export function StudioPrintApp() {
     setBeforeView(false);
     setCrop({ zoom: 1, offsetX: 0, offsetY: 0, rotation: 0 });
   }, []);
+
+  useEffect(() => {
+    if (!sourceImage) {
+      setCurrentImageBlob(null);
+      return;
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = sourceImage.width;
+    canvas.height = sourceImage.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.drawImage(sourceImage, 0, 0);
+    canvas.toBlob((blob) => setCurrentImageBlob(blob), "image/jpeg", 0.9);
+  }, [sourceImage]);
+
+  const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
+    try {
+      const res = await fetch(customer.photo_url);
+      const blob = await res.blob();
+      const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
+      const url = URL.createObjectURL(blob);
+      const img = new (window.Image as any)();
+      img.onload = () => handleImage(file, img, url);
+      img.src = url;
+    } catch (error) {
+      console.error("Failed to load customer photo:", error);
+    }
+  }, [handleImage]);
 
   useEffect(() => {
     if (!studioReady) return;
@@ -466,21 +501,12 @@ export function StudioPrintApp() {
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
-            <a 
-              href="https://github.com/pratiklamichhane/chitra" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="chrome-button github-star-link" 
-              title="Star on GitHub"
-            >
-              <Star size={16} />
-              <span className="github-star-text">Star on GitHub</span>
-            </a>
-            <span className="topbar-action-sep" />
             <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
             <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <span className="topbar-action-sep" />
+            <UserMenu />
           </div>
         </div>
       </header>
@@ -523,7 +549,10 @@ export function StudioPrintApp() {
         </nav>
 
         <aside ref={controlRailRef} className="control-rail">
-          <div id="upload" data-section="upload"><ImageUploader fileName={fileName} imageUrl={imageUrl} onImage={handleImage} /></div>
+          <div id="upload" data-section="upload">
+            <ImageUploader fileName={fileName} imageUrl={imageUrl} onImage={handleImage} />
+            <CustomerPhotosPanel onSelectPhoto={handleSelectCustomerPhoto} />
+          </div>
           <div id="beautify" className="mobile-optional-section" data-section="beautify">
             <BeautifyPanel
               enabled={beautifyEnabled}
@@ -598,6 +627,27 @@ export function StudioPrintApp() {
               }}
             />
           </div>
+          <div id="cloud" data-section="cloud">
+            <div className="fluent-card">
+              <div className="section-title">
+                <div className="flex items-center gap-2">
+                  <UploadCloud size={18} />
+                  <span>Cloud Storage</span>
+                </div>
+              </div>
+              <p className="text-muted text-xs mb-4">
+                Store this photo in the cloud for future use. You can search and reload it anytime.
+              </p>
+              <button
+                className="primary-action"
+                disabled={!sourceImage}
+                onClick={() => setSaveModalOpen(true)}
+              >
+                <Save size={16} />
+                <span>Save Customer Photo</span>
+              </button>
+            </div>
+          </div>
           <div id="export" className="mobile-optional-section" data-section="export"><ExportPanel canExport={canExport} onExportPng={exportPng} onExportPdf={exportPdf} onPrint={print} /></div>
         </aside>
 
@@ -647,6 +697,15 @@ export function StudioPrintApp() {
         onChange={updateManualCleanup}
         onReset={resetManualCleanup}
         onClose={() => setCleanupModalOpen(false)}
+      />
+
+      <SaveCustomerModal
+        isOpen={saveModalOpen}
+        onClose={() => setSaveModalOpen(false)}
+        imageBlob={currentImageBlob}
+        onSaved={() => {
+          // You could optionally refresh the customer list here if it had a ref
+        }}
       />
       {tourWelcomeOpen ? (
         <div className="tour-welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="tour-welcome-title">
