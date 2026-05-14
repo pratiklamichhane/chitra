@@ -105,7 +105,7 @@ function Modal({ title, icon: Icon, onClose, children, className = "" }: { title
             </div>
             <span className="modal-title">{title}</span>
           </div>
-          <button className="modal-close-button minimal-close" onClick={onClose}>
+          <button className="modal-close-button minimal-close" onClick={onClose} aria-label="Close modal">
             <X size={18} />
           </button>
         </div>
