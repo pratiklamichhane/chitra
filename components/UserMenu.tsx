@@ -94,6 +94,7 @@ export function UserMenu() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: any, onClose: () => void, children: React.ReactNode, className?: string }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
