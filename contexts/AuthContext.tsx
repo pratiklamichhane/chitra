@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isAuthenticated: false,
   });
 
-  /* eslint-disable react-hooks/set-state-in-effect */
+
   useEffect(() => {
     const storedToken = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setState((prev) => ({ ...prev, loading: false }));
   }, []);
-  /* eslint-enable react-hooks/set-state-in-effect */
+
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await apiLogin(email, password);
