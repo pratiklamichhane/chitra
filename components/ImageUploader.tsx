@@ -45,7 +45,7 @@ export function ImageUploader({ fileName, imageUrl, onImage }: ImageUploaderProp
         }}
       >
         {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
+
           <img className="upload-thumb" src={imageUrl} alt="Uploaded source" />
         ) : (
           <span className="empty-upload">
