@@ -28,7 +28,7 @@ export function ImageUploader({ fileName, imageUrl, onImage }: ImageUploaderProp
     <section className="fluent-card">
       <div className="section-title">
         <span><span className="step-number">1.</span> Upload</span>
-        {imageUrl ? <button className="icon-button" onClick={() => inputRef.current?.click()} title="Replace image"><RefreshCw size={15} /></button> : null}
+        {imageUrl ? <button className="icon-button" onClick={() => inputRef.current?.click()} aria-label="Replace image" title="Replace image"><RefreshCw size={15} /></button> : null}
       </div>
       <button
         className={`drop-zone ${isOver ? "drop-zone-active" : ""}`}
@@ -45,7 +45,7 @@ export function ImageUploader({ fileName, imageUrl, onImage }: ImageUploaderProp
         }}
       >
         {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
+
           <img className="upload-thumb" src={imageUrl} alt="Uploaded source" />
         ) : (
           <span className="empty-upload">

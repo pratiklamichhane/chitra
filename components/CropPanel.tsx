@@ -12,7 +12,7 @@ export function CropPanel({ crop, onChange, onReset }: CropPanelProps) {
     <section className="fluent-card">
       <div className="section-title">
         <span><span className="step-number">6.</span> Crop</span>
-        <button className="icon-button" onClick={onReset} title="Reset crop"><RotateCcw size={15} /></button>
+        <button className="icon-button" onClick={onReset} aria-label="Reset crop" title="Reset crop"><RotateCcw size={15} /></button>
       </div>
       <label className="control-row">
         <span>Zoom</span>
