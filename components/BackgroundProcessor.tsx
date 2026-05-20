@@ -48,7 +48,7 @@ export function BackgroundProcessor({
         <span><span className="step-number">3.</span> Background</span>
         <Eraser size={15} />
       </div>
-      <button className="primary-action w-full" disabled={!hasImage || isProcessing} onClick={onProcess}>
+      <button className="primary-action w-full" disabled={!hasImage || isProcessing} onClick={onProcess} title={!hasImage ? "Upload an image first to remove background" : isProcessing ? "Processing..." : "Remove background"}>
         {isProcessing ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
         {isProcessing ? "Removing background" : "Remove background"}
       </button>

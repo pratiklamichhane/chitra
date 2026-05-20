@@ -121,6 +121,7 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
                 type="submit"
                 className="minimal-primary-btn mt-4"
                 disabled={loading || !imageBlob}
+                title={!imageBlob ? "A photo is required to save" : loading ? "Saving..." : "Save Customer"}
               >
                 {loading ? (
                   <>
