@@ -50,7 +50,9 @@ export interface CustomerPhoto {
 
 export interface PhotoListResponse {
   data: CustomerPhoto[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   links: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   meta: any;
 }
 
