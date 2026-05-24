@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -223,7 +224,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -491,20 +492,20 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+            <button className="chrome-button" title={!canExport ? "Preview must be ready to export PNG" : "Export PNG"} aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+            <button className="chrome-button" title={!canExport ? "Preview must be ready to export PDF" : "Export PDF"} aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
+            <button className="chrome-button" title={!canExport ? "Preview must be ready to print" : "Print"} aria-label="Print" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" title="Show tour" aria-label="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" title="Fullscreen" aria-label="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
@@ -670,10 +671,10 @@ export function StudioPrintApp() {
           <span>{layout.count} copies · {layout.cols} columns · {layout.rows} rows</span>
         </div>
         <div className="zoom-dock footer-zoom-dock" style={canvasControlStyle} aria-label="Canvas view controls">
-          <button type="button" className="selected mobile-zoom-secondary" title="Drag photo"><Hand size={17} /></button>
-          <button type="button" className="mobile-zoom-secondary" title="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
+          <button type="button" className="selected mobile-zoom-secondary" title="Drag photo" aria-label="Drag photo"><Hand size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" title="Fit canvas" aria-label="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
           <span className="dock-divider mobile-zoom-secondary" />
-          <button type="button" title="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
+          <button type="button" title="Zoom out" aria-label="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
           <input
             className="zoom-track"
             type="range"
@@ -685,9 +686,9 @@ export function StudioPrintApp() {
             aria-label="Canvas zoom"
           />
           <strong>{canvasScaleLabel}</strong>
-          <button type="button" title="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
+          <button type="button" title="Zoom in" aria-label="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
           <span className="dock-divider mobile-zoom-secondary" />
-          <button type="button" className="mobile-zoom-secondary" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" title="Fill view" aria-label="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
         </div>
       </footer>
 
