@@ -14,6 +14,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
   const [photos, setPhotos] = useState<CustomerPhoto[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
                 onClick={() => onSelectPhoto(photo)}
               >
                 <div className="customer-thumb">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photo.photo_url} alt={photo.customer_name} />
                 </div>
                 <div className="customer-info">
