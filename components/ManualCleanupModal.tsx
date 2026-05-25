@@ -269,7 +269,7 @@ export function ManualCleanupModal({
             <Eraser size={20} />
             <span className="modal-title">Manual Background Cleanup</span>
           </div>
-          <button className="modal-close-button" onClick={handleClose} title="Close">
+          <button className="modal-close-button" onClick={handleClose} title="Close" aria-label="Close">
             <X size={20} />
           </button>
         </div>
