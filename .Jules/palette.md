@@ -1,0 +1,3 @@
+## 2024-05-26 - Dynamic Tooltips and Explicit ARIA Labels for Conditionally Disabled Buttons
+**Learning:** Icon-only buttons that are conditionally disabled (like export buttons before processing is done) lack clear feedback for users about *why* they are disabled. Screen readers also need explicit `aria-label` attributes to understand the button's purpose since there's no visible text label.
+**Action:** Always add dynamic `title` attributes to conditionally disabled buttons to explain both the enabled and disabled states. Add explicit `aria-label` attributes to icon-only buttons for accessibility.
