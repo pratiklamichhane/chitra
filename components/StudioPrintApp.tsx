@@ -204,7 +204,9 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    let active = true;
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -214,7 +216,10 @@ export function StudioPrintApp() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(sourceImage, 0, 0);
-    canvas.toBlob((blob) => setCurrentImageBlob(blob), "image/jpeg", 0.9);
+    canvas.toBlob((blob) => {
+      if (active) setCurrentImageBlob(blob);
+    }, "image/jpeg", 0.9);
+    return () => { active = false; };
   }, [sourceImage]);
 
   const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
@@ -223,7 +228,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -491,20 +496,20 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+            <button className="chrome-button" title={canExport ? "Export PNG" : "Process a photo to export"} aria-label="Export as PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+            <button className="chrome-button" title={canExport ? "Export PDF" : "Process a photo to export"} aria-label="Export as PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
+            <button className="chrome-button" title={canExport ? "Print" : "Process a photo to export"} aria-label="Print sheet" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" title="Show tour" aria-label="Show studio tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" title="Fullscreen" aria-label="Toggle fullscreen mode" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
