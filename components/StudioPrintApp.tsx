@@ -491,20 +491,20 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+            <button className="chrome-button" title={canExport ? "Export PNG" : "Process a photo first"} aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+            <button className="chrome-button" title={canExport ? "Export PDF" : "Process a photo first"} aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
+            <button className="chrome-button" title={canExport ? "Print" : "Process a photo first"} aria-label="Print" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" title="Show tour" aria-label="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" title="Fullscreen" aria-label="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
