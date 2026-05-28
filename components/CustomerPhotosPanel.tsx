@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useState, useEffect } from "react";
 import { Search, User, Phone, Image as ImageIcon, Loader2 } from "lucide-react";
 import { getPhotos, type CustomerPhoto } from "@/lib/auth";
@@ -14,7 +16,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
   const [photos, setPhotos] = useState<CustomerPhoto[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   useEffect(() => {
     if (!token) return;
@@ -71,7 +73,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
                 onClick={() => onSelectPhoto(photo)}
               >
                 <div className="customer-thumb">
-                  <img src={photo.photo_url} alt={photo.customer_name} />
+                  <Image src={photo.photo_url} alt={photo.customer_name} width={64} height={64} style={{ objectFit: "cover" }} />
                 </div>
                 <div className="customer-info">
                   <strong>{photo.customer_name}</strong>

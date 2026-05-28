@@ -205,8 +205,8 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
-      setCurrentImageBlob(null);
-      return;
+      const timer = setTimeout(() => setCurrentImageBlob(null), 0);
+      return () => clearTimeout(timer);
     }
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
@@ -223,7 +223,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
