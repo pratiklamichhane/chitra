@@ -205,8 +205,8 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
-      setCurrentImageBlob(null);
-      return;
+      const timer = setTimeout(() => setCurrentImageBlob(null), 0);
+      return () => clearTimeout(timer);
     }
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
@@ -223,7 +223,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -491,20 +491,20 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+            <button className="chrome-button" title={canExport ? "Export PNG" : "Process a photo first"} aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+            <button className="chrome-button" title={canExport ? "Export PDF" : "Process a photo first"} aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
+            <button className="chrome-button" title={canExport ? "Print" : "Process a photo first"} aria-label="Print" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" title="Show tour" aria-label="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" title="Fullscreen" aria-label="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
