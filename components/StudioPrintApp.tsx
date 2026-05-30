@@ -204,17 +204,29 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
-    if (!sourceImage) {
-      setCurrentImageBlob(null);
-      return;
-    }
-    const canvas = document.createElement("canvas");
-    canvas.width = sourceImage.width;
-    canvas.height = sourceImage.height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.drawImage(sourceImage, 0, 0);
-    canvas.toBlob((blob) => setCurrentImageBlob(blob), "image/jpeg", 0.9);
+    let active = true;
+
+    const updateBlob = () => {
+      if (!sourceImage) {
+        if (active) setCurrentImageBlob(null);
+        return;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = sourceImage.width;
+      canvas.height = sourceImage.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(sourceImage, 0, 0);
+      canvas.toBlob((blob) => {
+        if (active) setCurrentImageBlob(blob);
+      }, "image/jpeg", 0.9);
+    };
+
+    updateBlob();
+
+    return () => {
+      active = false;
+    };
   }, [sourceImage]);
 
   const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
@@ -223,7 +235,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
