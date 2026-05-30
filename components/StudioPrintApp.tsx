@@ -204,17 +204,29 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
-    if (!sourceImage) {
-      setCurrentImageBlob(null);
-      return;
-    }
-    const canvas = document.createElement("canvas");
-    canvas.width = sourceImage.width;
-    canvas.height = sourceImage.height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.drawImage(sourceImage, 0, 0);
-    canvas.toBlob((blob) => setCurrentImageBlob(blob), "image/jpeg", 0.9);
+    let active = true;
+
+    const updateBlob = () => {
+      if (!sourceImage) {
+        if (active) setCurrentImageBlob(null);
+        return;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = sourceImage.width;
+      canvas.height = sourceImage.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(sourceImage, 0, 0);
+      canvas.toBlob((blob) => {
+        if (active) setCurrentImageBlob(blob);
+      }, "image/jpeg", 0.9);
+    };
+
+    updateBlob();
+
+    return () => {
+      active = false;
+    };
   }, [sourceImage]);
 
   const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
@@ -223,7 +235,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -491,20 +503,20 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+            <button className="chrome-button" title={canExport ? "Export PNG" : "Process photo to export PNG"} aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
               <DownloadCloud size={16} />
             </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+            <button className="chrome-button" title={canExport ? "Export PDF" : "Process photo to export PDF"} aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
               <FileText size={16} />
             </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
+            <button className="chrome-button" title={canExport ? "Print layout" : "Process photo to print"} aria-label="Print" disabled={!canExport} onClick={print}>
               <Printer size={16} />
             </button>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" title="Show tour" aria-label="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" title="Toggle fullscreen" aria-label="Toggle fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
@@ -670,10 +682,10 @@ export function StudioPrintApp() {
           <span>{layout.count} copies · {layout.cols} columns · {layout.rows} rows</span>
         </div>
         <div className="zoom-dock footer-zoom-dock" style={canvasControlStyle} aria-label="Canvas view controls">
-          <button type="button" className="selected mobile-zoom-secondary" title="Drag photo"><Hand size={17} /></button>
-          <button type="button" className="mobile-zoom-secondary" title="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
+          <button type="button" className="selected mobile-zoom-secondary" title="Drag photo" aria-label="Drag photo"><Hand size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" title="Fit canvas" aria-label="Fit canvas" onClick={() => updateCanvasZoom(1)}><Expand size={17} /></button>
           <span className="dock-divider mobile-zoom-secondary" />
-          <button type="button" title="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
+          <button type="button" title="Zoom out" aria-label="Zoom out" onClick={() => updateCanvasZoom((current) => current - 0.1)}><Minus size={17} /></button>
           <input
             className="zoom-track"
             type="range"
@@ -685,9 +697,9 @@ export function StudioPrintApp() {
             aria-label="Canvas zoom"
           />
           <strong>{canvasScaleLabel}</strong>
-          <button type="button" title="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
+          <button type="button" title="Zoom in" aria-label="Zoom in" onClick={() => updateCanvasZoom((current) => current + 0.1)}><Plus size={17} /></button>
           <span className="dock-divider mobile-zoom-secondary" />
-          <button type="button" className="mobile-zoom-secondary" title="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
+          <button type="button" className="mobile-zoom-secondary" title="Fill view" aria-label="Fill view" onClick={() => updateCanvasZoom(1.35)}><Maximize size={17} /></button>
         </div>
       </footer>
 
