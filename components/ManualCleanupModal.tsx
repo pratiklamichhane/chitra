@@ -269,7 +269,7 @@ export function ManualCleanupModal({
             <Eraser size={20} />
             <span className="modal-title">Manual Background Cleanup</span>
           </div>
-          <button className="modal-close-button" onClick={handleClose} title="Close">
+          <button className="modal-close-button" onClick={handleClose} title="Close" aria-label="Close">
             <X size={20} />
           </button>
         </div>
@@ -336,15 +336,21 @@ export function ManualCleanupModal({
 
           <div className="cleanup-controls">
             <div className="cleanup-toolbar">
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)} title="Zoom out">
-                <ZoomOut size={15} />
-              </button>
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom(1)} title="Fit view">
-                <Maximize size={15} />
-              </button>
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)} title="Zoom in">
-                <ZoomIn size={15} />
-              </button>
+              <span title="Zoom out" style={{ display: 'inline-block' }}>
+                <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)} aria-label="Zoom out">
+                  <ZoomOut size={15} />
+                </button>
+              </span>
+              <span title="Fit view" style={{ display: 'inline-block' }}>
+                <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom(1)} aria-label="Fit view">
+                  <Maximize size={15} />
+                </button>
+              </span>
+              <span title="Zoom in" style={{ display: 'inline-block' }}>
+                <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)} aria-label="Zoom in">
+                  <ZoomIn size={15} />
+                </button>
+              </span>
               <strong>{zoomLabel}</strong>
             </div>
               <div className="mode-toggle">
