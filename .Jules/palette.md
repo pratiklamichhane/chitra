@@ -1,0 +1,3 @@
+## 2025-06-02 - Form Input Labelling and Modal Accessibility
+**Learning:** Found several inputs lacking proper `htmlFor` / `id` combinations and modal close buttons missing explicit `aria-label`s. Also discovered that TypeScript `catch` blocks frequently rely on `any` types that generate ESLint warnings, which is critical to resolve for CI environments.
+**Action:** Always link form labels to inputs to increase clickable hit area (which is great for UX!) and attach `aria-label` to icon-only buttons for screen-readers. Also type catch errors as `unknown` and gracefully fallback on `instanceof Error`.
