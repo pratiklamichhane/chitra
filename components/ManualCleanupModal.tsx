@@ -269,9 +269,11 @@ export function ManualCleanupModal({
             <Eraser size={20} />
             <span className="modal-title">Manual Background Cleanup</span>
           </div>
-          <button className="modal-close-button" onClick={handleClose} title="Close">
-            <X size={20} />
-          </button>
+          <span title="Close" style={{ display: "inline-block" }}>
+            <button className="modal-close-button" aria-label="Close" onClick={handleClose}>
+              <X size={20} />
+            </button>
+          </span>
         </div>
 
         <div className="modal-body cleanup-modal-body">
@@ -336,15 +338,21 @@ export function ManualCleanupModal({
 
           <div className="cleanup-controls">
             <div className="cleanup-toolbar">
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)} title="Zoom out">
-                <ZoomOut size={15} />
-              </button>
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom(1)} title="Fit view">
-                <Maximize size={15} />
-              </button>
-              <button type="button" className="icon-button" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)} title="Zoom in">
-                <ZoomIn size={15} />
-              </button>
+              <span title={!hasSubject ? "Process a photo to enable zoom" : "Zoom out"} style={{ display: "inline-block" }}>
+                <button type="button" className="icon-button" aria-label="Zoom out" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current - 0.2)}>
+                  <ZoomOut size={15} />
+                </button>
+              </span>
+              <span title={!hasSubject ? "Process a photo to enable fit view" : "Fit view"} style={{ display: "inline-block" }}>
+                <button type="button" className="icon-button" aria-label="Fit view" disabled={!hasSubject} onClick={() => updateViewZoom(1)}>
+                  <Maximize size={15} />
+                </button>
+              </span>
+              <span title={!hasSubject ? "Process a photo to enable zoom" : "Zoom in"} style={{ display: "inline-block" }}>
+                <button type="button" className="icon-button" aria-label="Zoom in" disabled={!hasSubject} onClick={() => updateViewZoom((current) => current + 0.2)}>
+                  <ZoomIn size={15} />
+                </button>
+              </span>
               <strong>{zoomLabel}</strong>
             </div>
               <div className="mode-toggle">
