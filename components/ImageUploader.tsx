@@ -28,7 +28,11 @@ export function ImageUploader({ fileName, imageUrl, onImage }: ImageUploaderProp
     <section className="fluent-card">
       <div className="section-title">
         <span><span className="step-number">1.</span> Upload</span>
-        {imageUrl ? <button className="icon-button" onClick={() => inputRef.current?.click()} title="Replace image"><RefreshCw size={15} /></button> : null}
+        {imageUrl ? (
+          <span title="Replace image" style={{ display: "inline-block" }}>
+            <button className="icon-button" aria-label="Replace image" onClick={() => inputRef.current?.click()}><RefreshCw size={15} /></button>
+          </span>
+        ) : null}
       </div>
       <button
         className={`drop-zone ${isOver ? "drop-zone-active" : ""}`}
