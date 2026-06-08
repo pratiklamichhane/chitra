@@ -1,0 +1,3 @@
+## 2024-11-20 - Tooltips on disabled buttons
+**Learning:** Native `title` tooltips do not show on `disabled` HTML elements because they swallow mouse events in many browsers. When disabled buttons are in a flex or grid layout, the wrapper must be styled with `display: inline-flex; width: 100%` and the button itself must have `width: 100%` to preserve the layout.
+**Action:** Always wrap disabled elements with a `span` containing the `title` attribute, and ensure the wrapper has `display: inline-flex` or `display: inline-block` with `width: 100%` (if the button had width 100% implicitly or explicitly) to maintain layout and capture hover events.
