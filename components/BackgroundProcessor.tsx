@@ -48,10 +48,15 @@ export function BackgroundProcessor({
         <span><span className="step-number">3.</span> Background</span>
         <Eraser size={15} />
       </div>
-      <button className="primary-action w-full" disabled={!hasImage || isProcessing} onClick={onProcess}>
-        {isProcessing ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
-        {isProcessing ? "Removing background" : "Remove background"}
-      </button>
+      <span
+        className="inline-flex w-full"
+        title={!hasImage ? "Upload an image first" : isProcessing ? "Processing..." : undefined}
+      >
+        <button className="primary-action w-full" disabled={!hasImage || isProcessing} onClick={onProcess}>
+          {isProcessing ? <Loader2 className="animate-spin" size={16} /> : <Sparkles size={16} />}
+          {isProcessing ? "Removing background" : "Remove background"}
+        </button>
+      </span>
       {isProcessing ? <ProcessingInsight /> : null}
       <div className="segmented mt-3">
         <button className={beforeAfter ? "selected" : ""} disabled={!hasProcessedImage} onClick={onToggleBeforeAfter}>
