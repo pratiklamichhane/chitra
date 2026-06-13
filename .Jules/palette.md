@@ -1,0 +1,3 @@
+## 2024-06-13 - Improve disabled button UX
+**Learning:** Disabled HTML elements swallow mouse events, preventing native tooltips (`title` attribute) from appearing directly. Furthermore, disabled elements cannot receive keyboard focus, meaning keyboard and screen reader users will also miss the title explanation.
+**Action:** Wrap the disabled button in a `<span>` containing the `title` attribute. Add `tabIndex={0}` to the span to ensure keyboard accessibility. For buttons within flex or grid layouts (like `w-full`), use `display: inline-flex` (e.g., `className="inline-flex w-full"`) on the wrapper to preserve the layout and capture hover events.
