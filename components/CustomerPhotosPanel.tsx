@@ -14,7 +14,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
   const [photos, setPhotos] = useState<CustomerPhoto[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   useEffect(() => {
     if (!token) return;
