@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
@@ -42,8 +43,8 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
         onSaved();
         onClose();
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || "Failed to save customer");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save customer");
     } finally {
       setLoading(false);
     }
