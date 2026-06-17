@@ -1,0 +1,38 @@
+
+> photo-booth@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+✓ Ready in 546ms
+
+○ Compiling / ...
+ GET / 307 in 4.6s (next.js: 4.1s, application-code: 498ms)
+○ Compiling /studio ...
+ GET /studio 200 in 4.7s (next.js: 4.4s, application-code: 357ms)
+ GET /studio 200 in 153ms (next.js: 5ms, application-code: 148ms)
+[browser] Failed to fetch photos: TypeError: Failed to fetch
+    at getPhotos (lib/auth.ts:140:21)
+    at CustomerPhotosPanel.useEffect.fetchPhotos (components/CustomerPhotosPanel.tsx:25:41)
+  138 |   url.searchParams.append("page", page.toString());
+  139 |
+> 140 |   const res = await fetch(url.toString(), {
+      |                     ^
+  141 |     headers: {
+  142 |       "Authorization": `Bearer ${token}`,
+  143 |       "Accept": "application/json", (components/CustomerPhotosPanel.tsx:28:17)
+ GET / 307 in 176ms (next.js: 11ms, application-code: 165ms)
+ GET /studio 200 in 89ms (next.js: 4ms, application-code: 85ms)
+ GET /login 200 in 58ms (next.js: 5ms, application-code: 53ms)
+ GET /studio 200 in 72ms (next.js: 5ms, application-code: 67ms)
+[browser] Failed to fetch photos: TypeError: Failed to fetch
+    at getPhotos (lib/auth.ts:140:21)
+    at CustomerPhotosPanel.useEffect.fetchPhotos (components/CustomerPhotosPanel.tsx:25:41)
+  138 |   url.searchParams.append("page", page.toString());
+  139 |
+> 140 |   const res = await fetch(url.toString(), {
+      |                     ^
+  141 |     headers: {
+  142 |       "Authorization": `Bearer ${token}`,
+  143 |       "Accept": "application/json", (components/CustomerPhotosPanel.tsx:28:17)

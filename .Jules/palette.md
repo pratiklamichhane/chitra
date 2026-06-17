@@ -1,0 +1,3 @@
+## $(date +%Y-%m-%d) - Adding Accessible Tooltips to Disabled Buttons
+**Learning:** Wrapping disabled buttons in a `<span title="...">` is an effective way to explain the disabled state (which swallows pointer events). However, setting `tabIndex={0}` on the span makes it focusable, which can cause double tab-stops if the button becomes enabled. The fix is to dynamically toggle `tabIndex={!canExport ? 0 : undefined}` on the span to ensure accessibility without regressions.
+**Action:** Use conditional `tabIndex` when wrapping buttons for disabled tooltips. Ensure `inline-flex w-full` styling is applied so as not to break parent flex or grid containers.
