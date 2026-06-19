@@ -1,0 +1,3 @@
+## 2024-06-19 - Added Disabled Tooltips to Export Buttons
+**Learning:** Native `title` tooltips on disabled `<button>` elements do not work because disabled elements swallow mouse events and cannot receive keyboard focus. Wrapping them in a `span` with `inline-flex` and conditionally applying `tabIndex={0}` allows screen reader and keyboard accessibility while preserving grid layouts.
+**Action:** When adding tooltips to buttons that can be disabled, wrap them in an inline-flex `span` to hold the `title` and conditionally apply `tabIndex` so they remain accessible to screen readers and keyboard users when disabled, without causing a double-focus regression when enabled.
