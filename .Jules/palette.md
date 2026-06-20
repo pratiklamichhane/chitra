@@ -1,0 +1,3 @@
+## 2024-06-20 - Disabled Button Accessibility
+**Learning:** Disabled HTML elements swallow mouse events and cannot receive keyboard focus, meaning tooltips added via native `title` attributes on disabled buttons are inaccessible to all users. To solve this, wrap disabled buttons in a `<span>` containing the `title` attribute. Crucially, apply `tabIndex` conditionally on the wrapper (e.g., `tabIndex={!canExport ? 0 : undefined}`) to prevent a double tab-stop accessibility regression when the button is enabled.
+**Action:** Always wrap conditionally disabled buttons with a `<span>` providing a `title` and conditional `tabIndex`, ensuring flex/grid layout constraints are maintained by adding `w-full` class to both the wrapper and the inner button.
