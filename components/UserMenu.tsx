@@ -177,7 +177,7 @@ function StudioModal({ token, onClose }: { token: string, onClose: () => void })
   useEffect(() => {
     getStudio(token)
       .then(setStudio)
-      .catch(err => setError(err.message))
+      .catch(err => setError(err instanceof Error ? err.message : "Error"))
       .finally(() => setLoading(false));
   }, [token]);
 
@@ -245,7 +245,7 @@ function SubscriptionModal({ token, onClose }: { token: string, onClose: () => v
   useEffect(() => {
     getSubscription(token)
       .then(data => setSub(data.subscription))
-      .catch(err => setError(err.message))
+      .catch(err => setError(err instanceof Error ? err.message : "Error"))
       .finally(() => setLoading(false));
   }, [token]);
 
