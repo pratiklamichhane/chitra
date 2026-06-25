@@ -356,6 +356,7 @@ export function StudioPrintApp() {
       popover: {
         title,
         description,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         side: side as any,
         align,
       },
