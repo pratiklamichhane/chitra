@@ -94,7 +94,7 @@ export function UserMenu() {
   );
 }
 
-function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: any, onClose: () => void, children: React.ReactNode, className?: string }) {
+function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: React.ElementType, onClose: () => void, children: React.ReactNode, className?: string }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className={`modal-content minimal-modal ${className}`} onClick={e => e.stopPropagation()}>
@@ -105,7 +105,7 @@ function Modal({ title, icon: Icon, onClose, children, className = "" }: { title
             </div>
             <span className="modal-title">{title}</span>
           </div>
-          <button className="modal-close-button minimal-close" onClick={onClose}>
+          <button className="modal-close-button minimal-close" onClick={onClose} aria-label="Close" title="Close">
             <X size={18} />
           </button>
         </div>
