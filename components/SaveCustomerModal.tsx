@@ -61,7 +61,7 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
             </div>
             <span className="modal-title">Save to Cloud</span>
           </div>
-          <button className="modal-close-button minimal-close" onClick={onClose}>
+          <button className="modal-close-button minimal-close" onClick={onClose} aria-label="Close" title="Close">
             <X size={18} />
           </button>
         </div>
