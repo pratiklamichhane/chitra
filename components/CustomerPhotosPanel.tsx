@@ -14,7 +14,6 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
   const [photos, setPhotos] = useState<CustomerPhoto[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (!token) return;
@@ -22,7 +21,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
     const fetchPhotos = async () => {
       setLoading(true);
       try {
-        const response = await getPhotos(token, search, page);
+        const response = await getPhotos(token, search, 1);
         setPhotos(response.data);
       } catch (error) {
         console.error("Failed to fetch photos:", error);
