@@ -33,7 +33,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
 
     const timer = setTimeout(fetchPhotos, 300);
     return () => clearTimeout(timer);
-  }, [token, search, page]);
+  }, [token, search]);
 
   return (
     <div className="fluent-card">
@@ -71,6 +71,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
                 onClick={() => onSelectPhoto(photo)}
               >
                 <div className="customer-thumb">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photo.photo_url} alt={photo.customer_name} />
                 </div>
                 <div className="customer-info">
