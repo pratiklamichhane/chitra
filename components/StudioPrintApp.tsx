@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -223,7 +224,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -344,7 +345,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -491,20 +492,26 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span className="inline-flex" title={!canExport ? "Waiting for an image to be processed" : undefined} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Export PNG" title="Export PNG" disabled={!canExport} onClick={exportPng}>
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={!canExport ? "Waiting for an image to be processed" : undefined} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Export PDF" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
+                <FileText size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={!canExport ? "Waiting for an image to be processed" : undefined} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Print" title="Print" disabled={!canExport} onClick={print}>
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" aria-label="Show tour" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" aria-label="Fullscreen" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
