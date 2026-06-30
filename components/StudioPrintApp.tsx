@@ -215,7 +215,6 @@ export function StudioPrintApp() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(sourceImage, 0, 0);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     canvas.toBlob((blob) => setCurrentImageBlob(blob), "image/jpeg", 0.9);
   }, [sourceImage]);
 
