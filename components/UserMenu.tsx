@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { 
   User, 
   CreditCard, 
@@ -94,7 +94,7 @@ export function UserMenu() {
   );
 }
 
-function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: any, onClose: () => void, children: React.ReactNode, className?: string }) {
+function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: React.ElementType, onClose: () => void, children: React.ReactNode, className?: string }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className={`modal-content minimal-modal ${className}`} onClick={e => e.stopPropagation()}>
@@ -177,7 +177,7 @@ function StudioModal({ token, onClose }: { token: string, onClose: () => void })
   useEffect(() => {
     getStudio(token)
       .then(setStudio)
-      .catch(err => setError(err.message))
+      .catch(err => setError(err instanceof Error ? err.message : "Failed to load studio"))
       .finally(() => setLoading(false));
   }, [token]);
 
@@ -245,7 +245,7 @@ function SubscriptionModal({ token, onClose }: { token: string, onClose: () => v
   useEffect(() => {
     getSubscription(token)
       .then(data => setSub(data.subscription))
-      .catch(err => setError(err.message))
+      .catch(err => setError(err instanceof Error ? err.message : "Failed to load subscription"))
       .finally(() => setLoading(false));
   }, [token]);
 
