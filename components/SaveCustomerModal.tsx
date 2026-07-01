@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { User, Phone, X, Save, Loader2, CheckCircle2 } from "lucide-react";
 import { storePhoto } from "@/lib/auth";
 import { useAuth } from "@/contexts/AuthContext";
@@ -77,12 +77,14 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
             <form onSubmit={handleSave} className="grid gap-4">
               <div className="preview-mini-container">
                 {imageBlob && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={URL.createObjectURL(imageBlob)}
-                    alt="Preview"
-                    className="save-preview-img"
-                  />
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={URL.createObjectURL(imageBlob)}
+                      alt="Preview"
+                      className="save-preview-img"
+                    />
+                  </>
                 )}
               </div>
 
