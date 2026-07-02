@@ -42,7 +42,7 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
         onSaved();
         onClose();
       }, 1500);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(err.message || "Failed to save customer");
     } finally {
       setLoading(false);
