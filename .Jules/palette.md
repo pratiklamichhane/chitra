@@ -1,0 +1,3 @@
+## 2024-07-03 - Tooltips for Disabled Buttons
+**Learning:** Disabled HTML elements swallow mouse events and cannot receive keyboard focus, meaning native `title` tooltips will not appear directly on disabled buttons, breaking accessibility context.
+**Action:** Wrap disabled buttons in a `<span>` containing the `title` attribute. Apply `tabIndex={0}` conditionally to the wrapper when the button is disabled to enable keyboard focus, and remove it when enabled to prevent a double tab-stop accessibility regression. Use `display: inline-flex` and `width: 100%` on the wrapper and button respectively to preserve grid/flex layouts.
