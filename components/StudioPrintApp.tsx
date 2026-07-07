@@ -355,7 +355,7 @@ export function StudioPrintApp() {
       popover: {
         title,
         description,
-        side,
+        side: side as "top" | "right" | "bottom" | "left",
         align,
       },
     }),
