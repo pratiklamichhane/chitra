@@ -42,8 +42,8 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
         onSaved();
         onClose();
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || "Failed to save customer");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save customer");
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
             </div>
             <span className="modal-title">Save to Cloud</span>
           </div>
-          <button className="modal-close-button minimal-close" onClick={onClose}>
+          <button className="modal-close-button minimal-close" onClick={onClose} aria-label="Close modal">
             <X size={18} />
           </button>
         </div>
@@ -77,6 +77,7 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
             <form onSubmit={handleSave} className="grid gap-4">
               <div className="preview-mini-container">
                 {imageBlob && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={URL.createObjectURL(imageBlob)}
                     alt="Preview"
@@ -86,10 +87,11 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
               </div>
 
               <div className="input-group">
-                <label className="input-label">Customer Name</label>
+                <label htmlFor="customerName" className="input-label">Customer Name</label>
                 <div className="relative">
                   <User className="absolute left-3 top-half translate-y-half-neg text-muted" size={16} />
                   <input
+                    id="customerName"
                     type="text"
                     required
                     placeholder="Enter full name"
@@ -101,10 +103,11 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
               </div>
 
               <div className="input-group">
-                <label className="input-label">Phone Number</label>
+                <label htmlFor="customerPhone" className="input-label">Phone Number</label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-half translate-y-half-neg text-muted" size={16} />
                   <input
+                    id="customerPhone"
                     type="text"
                     required
                     placeholder="Enter contact number"
