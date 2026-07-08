@@ -1,0 +1,3 @@
+## 2024-07-08 - Wrapping Disabled Buttons for Accessibility
+**Learning:** Native `disabled` buttons swallow mouse events (like tooltips via the `title` attribute) and cannot receive keyboard focus, hiding the disabled reason from keyboard and screen reader users.
+**Action:** When adding explanatory tooltips/titles to disabled buttons, wrap them in a `<span>` with `display: inline-flex` and conditionally apply `tabIndex={!isEnabled ? 0 : undefined}`. This allows keyboard navigation to the tooltip when disabled, but prevents a double tab-stop accessibility regression when the button is enabled. Ensure the button has `w-full` if layout requires it.
