@@ -1,0 +1,3 @@
+## 2024-05-24 - Tooltips on disabled buttons
+**Learning:** Disabled buttons in HTML swallow mouse events and cannot receive keyboard focus, meaning standard tooltips won't appear and the disabled state is not announced to screen readers. Wrapping them in a `span` with a `title` (or `aria-label`) attribute and a conditional `tabIndex` solves this.
+**Action:** When buttons are conditionally disabled (e.g., waiting for user input or an action to complete), wrap them in a focusable element that explains *why* they are disabled to provide a better user experience and make the interface more accessible.
