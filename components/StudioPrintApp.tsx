@@ -205,7 +205,6 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -224,7 +223,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new window.Image();
+      const img = new (window.Image as any)();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -345,7 +344,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left";
+      side?: "top" | "right" | "bottom" | "left" | "over";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
