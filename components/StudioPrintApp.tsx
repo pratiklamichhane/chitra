@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -214,7 +215,9 @@ export function StudioPrintApp() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.drawImage(sourceImage, 0, 0);
-    canvas.toBlob((blob) => setCurrentImageBlob(blob), "image/jpeg", 0.9);
+    canvas.toBlob((blob) => {
+      setCurrentImageBlob(blob);
+    }, "image/jpeg", 0.9);
   }, [sourceImage]);
 
   const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
@@ -223,7 +226,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
