@@ -1,0 +1,3 @@
+## 2026-07-23 - Adding Tooltips for Disabled Buttons
+**Learning:** Disabled elements swallow mouse events, meaning standard HTML `title` attributes on them will not show a tooltip. Also, strict TypeScript errors for `useEffect` state-setting exist in this repository's lint configuration. Furthermore, Cloudflare workers CI strictly enforces `CI=true pnpm run lint` and `CI=true pnpm run build`.
+**Action:** Wrap disabled elements in a `<span>` with the `title` attribute, and ensure the span has `tabIndex={0}` conditionally for keyboard users, and a class like `inline-flex w-full` and inner class `w-full` if part of a flex or grid container. Always run `CI=true pnpm run build` and `CI=true pnpm run lint` after any changes.
