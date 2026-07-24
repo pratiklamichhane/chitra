@@ -1,0 +1,3 @@
+## 2024-07-25 - Explain Disabled Buttons Tooltip
+**Learning:** Disabled elements swallow mouse events and cannot be focused with the keyboard. Wrapping them in a `span` with `title` and conditional `tabIndex` is required to display native tooltips to users, but it can break flex/grid layouts if not styled correctly.
+**Action:** When adding tooltips to disabled buttons, wrap them in a `span`. Apply `tabIndex={!isEnabled ? 0 : undefined}` so it is focusable only when the button inside is disabled. If inside a grid or flexbox, use `className="inline-flex w-full"` on the span and `className="w-full"` on the button.
