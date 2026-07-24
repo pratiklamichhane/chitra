@@ -50,8 +50,8 @@ export interface CustomerPhoto {
 
 export interface PhotoListResponse {
   data: CustomerPhoto[];
-  links: any;
-  meta: any;
+  links: unknown;
+  meta: unknown;
 }
 
 export interface LoginResponse {
