@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -223,7 +224,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -344,7 +345,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -638,14 +639,16 @@ export function StudioPrintApp() {
               <p className="text-muted text-xs mb-4">
                 Store this photo in the cloud for future use. You can search and reload it anytime.
               </p>
-              <button
-                className="primary-action"
-                disabled={!sourceImage}
-                onClick={() => setSaveModalOpen(true)}
-              >
-                <Save size={16} />
-                <span>Save Customer Photo</span>
-              </button>
+              <span title={!sourceImage ? "Upload a photo to save" : undefined} tabIndex={!sourceImage ? 0 : undefined} className="inline-flex w-full">
+                <button
+                  className="primary-action w-full"
+                  disabled={!sourceImage}
+                  onClick={() => setSaveModalOpen(true)}
+                >
+                  <Save size={16} />
+                  <span>Save Customer Photo</span>
+                </button>
+              </span>
             </div>
           </div>
           <div id="export" className="mobile-optional-section" data-section="export"><ExportPanel canExport={canExport} onExportPng={exportPng} onExportPdf={exportPdf} onPrint={print} /></div>
