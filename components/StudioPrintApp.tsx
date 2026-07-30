@@ -349,7 +349,8 @@ export function StudioPrintApp() {
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
-      onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
+      onHighlightStarted: (...args) => {
+        const { driver: tourDriver } = args[2] as { driver: Driver };
         scrollTourTargetIntoView(sectionId);
         window.requestAnimationFrame(() => tourDriver.refresh());
       },
