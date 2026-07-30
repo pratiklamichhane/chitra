@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessible Disabled Button Wrappers
+**Learning:** Native tooltips (via the `title` attribute) do not appear on disabled HTML elements because they swallow mouse events, and they cannot receive keyboard focus, breaking accessibility and user experience.
+**Action:** Wrap disabled buttons in a `<span>` containing the `title` attribute. Apply `tabIndex={!canExport ? 0 : undefined}` to make the wrapper keyboard focusable only when disabled (avoiding double tab-stops when enabled). For buttons in flex/grid layouts, apply `className="inline-flex w-full"` to the wrapper and `w-full` to the button to preserve the layout.
