@@ -1,0 +1,1 @@
+## 2026-07-31 - Add Tooltips for Disabled Action Buttons\n**Learning:** Users often do not know why a primary button is disabled (e.g. Export panel when no subject/image is available).\n**Action:** Wrapped disabled buttons in a <span> with title and tabIndex conditionally based on the disabled state to inform screen readers and hover users of the reason.
