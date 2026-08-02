@@ -1,0 +1,3 @@
+## 2024-11-20 - [UX improvement: Disabled export buttons tooltips and tab flow]
+**Learning:** Adding tooltips to disabled buttons natively does not work because disabled elements swallow pointer events, but when wrapping them in a span to add title attributes, it's crucial to conditionally apply tabIndex only when disabled. Otherwise, enabling the button creates a double tab-stop, which creates a frustrating keyboard experience.
+**Action:** Always wrap disabled buttons needing tooltips in spans, and ensure the wrapper has `tabIndex={!isEnabled ? 0 : undefined}` so only the disabled state captures focus for the tooltip to appear.
