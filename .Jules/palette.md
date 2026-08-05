@@ -1,0 +1,3 @@
+## 2024-05-24 - Playwright Verification Sidebars
+**Learning:** When using Playwright to test studio functionality, panels in the sidebar (like ExportPanel) may not be visible or interactable until their corresponding tool category is selected.
+**Action:** Explicitly click the required sidebar menu item (e.g., `page.get_by_role("link", name="Export").click()`) before attempting to locate elements inside the panel, as locating via button role may time out. Playwright scripts should also avoid resolving elements ambiguously, so prefer explicit, unique locators like `page.get_by_role("link", name="Export")` over `get_by_text("Export")`.
