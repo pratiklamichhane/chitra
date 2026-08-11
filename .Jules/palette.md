@@ -1,0 +1,3 @@
+## 2024-10-24 - Disabled Buttons Swallow Events and Focus
+**Learning:** Native `disabled` HTML attributes on buttons swallow pointer events (like mouse hover for tooltips) and prevent keyboard focus, making it impossible to naturally convey *why* a button is disabled to assistive tech or mouse users.
+**Action:** When a button's disabled state needs explanation, wrap the button in a `<span>` with the `title` attribute. Crucially, conditionally apply `tabIndex={!canExecute ? 0 : undefined}` to the wrapper, so it is only focusable when the button is disabled (preventing double tab-stops when enabled). If in a flex/grid layout, ensure the wrapper uses `inline-flex min-w-0 w-full` and the button uses `w-full`.
