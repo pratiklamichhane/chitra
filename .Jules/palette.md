@@ -1,0 +1,3 @@
+## 2024-05-18 - Wrapping disabled buttons for accessibility in Grid/Flex layouts
+**Learning:** Disabled HTML elements swallow mouse events and cannot receive keyboard focus, meaning native tooltips won't appear. Wrapping them in a span with a title and conditional tabIndex fixes this, but can break Grid/Flex layouts if not sized correctly.
+**Action:** When wrapping disabled buttons for a11y tooltips within flex or grid containers, ensure the wrapper uses `display: inline-flex` with `w-full min-w-0` classes, and the inner button takes `width: 100%` (`w-full`) to preserve the layout structure and prevent overflow.
