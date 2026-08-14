@@ -1,0 +1,3 @@
+## 2024-05-30 - Accessible Disabled Buttons Tooltips
+**Learning:** Native `disabled` HTML buttons swallow pointer events (like hover) and cannot receive focus, preventing tooltips via the `title` attribute from appearing for both mouse and keyboard users.
+**Action:** Wrap disabled buttons in a `<span>` containing the `title` attribute. Apply `tabIndex={0}` conditionally on the wrapper only when disabled to avoid double tab-stops when enabled. For buttons in CSS grid/flex layouts, use `display: inline-flex` (or Tailwind `inline-flex w-full min-w-0`) on the wrapper and `width: 100%` (or `w-full`) on the button to preserve intended styling.
