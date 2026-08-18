@@ -20,7 +20,7 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!token || !imageBlob) return;
 
@@ -42,8 +42,8 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
         onSaved();
         onClose();
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || "Failed to save customer");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save customer");
     } finally {
       setLoading(false);
     }
@@ -74,14 +74,17 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
               <p>The photo has been securely stored in the cloud.</p>
             </div>
           ) : (
-            <form onSubmit={handleSave} className="grid gap-4">
+            <form onSubmit={handleSubmit} className="grid gap-4">
               <div className="preview-mini-container">
                 {imageBlob && (
-                  <img
-                    src={URL.createObjectURL(imageBlob)}
-                    alt="Preview"
-                    className="save-preview-img"
-                  />
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={URL.createObjectURL(imageBlob)}
+                      alt="Preview"
+                      className="save-preview-img"
+                    />
+                  </>
                 )}
               </div>
 
