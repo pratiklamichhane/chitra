@@ -12,9 +12,27 @@ export function ExportPanel({ canExport, onExportPng, onExportPdf, onPrint }: Ex
     <section className="fluent-card">
       <div className="section-title"><span>Export</span></div>
       <div className="export-grid">
-        <button className="primary-action" disabled={!canExport} onClick={onExportPng}><Download size={16} />PNG</button>
-        <button disabled={!canExport} onClick={onExportPdf}><FileDown size={16} />PDF</button>
-        <button disabled={!canExport} onClick={onPrint}><Printer size={16} />Print</button>
+        <span
+          className="inline-flex w-full min-w-0"
+          title={!canExport ? "Please select and process an image first" : undefined}
+          tabIndex={!canExport ? 0 : undefined}
+        >
+          <button className="primary-action w-full" disabled={!canExport} onClick={onExportPng}><Download size={16} />PNG</button>
+        </span>
+        <span
+          className="inline-flex w-full min-w-0"
+          title={!canExport ? "Please select and process an image first" : undefined}
+          tabIndex={!canExport ? 0 : undefined}
+        >
+          <button className="w-full" disabled={!canExport} onClick={onExportPdf}><FileDown size={16} />PDF</button>
+        </span>
+        <span
+          className="inline-flex w-full min-w-0"
+          title={!canExport ? "Please select and process an image first" : undefined}
+          tabIndex={!canExport ? 0 : undefined}
+        >
+          <button className="w-full" disabled={!canExport} onClick={onPrint}><Printer size={16} />Print</button>
+        </span>
       </div>
     </section>
   );

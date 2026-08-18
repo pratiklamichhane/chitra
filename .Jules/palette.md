@@ -1,0 +1,3 @@
+## 2024-08-18 - Native Tooltips for Disabled Buttons
+**Learning:** Native `disabled` HTML elements swallow mouse events and cannot receive keyboard focus, meaning that `title` attributes placed directly on them will not be shown to users natively (no tooltip).
+**Action:** Wrap the disabled button in a `<span title="...">` and conditionally apply `tabIndex={0}` to the span when disabled (so it receives focus). For layout retention, especially in flex or grid layouts like `.export-grid`, ensure the span wrapper acts appropriately (e.g. `className="inline-flex w-full min-w-0"`) and that the button inside also expands (e.g. `className="w-full"`). When the button is enabled, omit `tabIndex` from the wrapper to avoid a double tab-stop.
