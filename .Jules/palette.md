@@ -1,0 +1,3 @@
+## 2024-06-25 - Tooltips for disabled buttons in flex/grid layouts
+**Learning:** Native `title` tooltips do not appear on disabled HTML elements. Wrapping them in a `span` with the `title` works, but if the buttons are inside flex or grid containers, this wrapper breaks the layout unless it inherits the necessary layout properties.
+**Action:** When adding tooltips to disabled buttons using a wrapper span, apply `className="inline-flex w-full min-w-0"` to the span and ensure the inner button has `w-full`. Conditionally apply `tabIndex={!isEnabled ? 0 : undefined}` to maintain keyboard accessibility without introducing double tab-stops when enabled.
