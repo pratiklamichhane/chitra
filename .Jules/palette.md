@@ -4,3 +4,6 @@
 ## 2024-08-23 - Suppressing Next.js image warnings conditionally
 **Learning:** To suppress Next.js lint warnings when native `<img>` elements are required over `<Image />`, place `/* eslint-disable-next-line @next/next/no-img-element */` immediately above the element. However, if the image is rendered conditionally inside a JSX logical expression (e.g., `condition && ( <img /> )`), placing the comment directly inside the parentheses without a wrapper causes JSX parsing errors (`Parsing error: ')' expected`).
 **Action:** When suppressing lint warnings for conditionally rendered elements in JSX, wrap both the comment and the element within a React fragment `<> ... </>` to ensure correct parsing.
+## 2024-08-23 - driver.js type updates
+**Learning:** `driver.js` version `1.8.0` removed the `"over"` option from the `Side` type (it is no longer valid in `driver.js` popover configurations). Older configuration using `"over"` will cause strict TypeScript build failures.
+**Action:** When working with `driver.js` tours or popovers, use predefined valid orientations (`"top" | "right" | "bottom" | "left"`) instead of `"over"`.
