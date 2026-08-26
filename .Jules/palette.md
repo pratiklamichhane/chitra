@@ -1,0 +1,3 @@
+## 2024-08-26 - Tooltips for disabled elements in Flex/Grid
+**Learning:** Disabled elements swallow mouse events and cannot receive keyboard focus, meaning native tooltips (`title` attributes) won't show up. Wrapping them in a focusable `span` makes the tooltip accessible.
+**Action:** When adding a tooltip to a conditionally disabled element, wrap it in a `span` with the `title` attribute. Conditionally set `tabIndex={0}` on the wrapper only when disabled to avoid double tab-stops. Ensure the wrapper receives layout classes (e.g., `inline-flex`, `w-full`, `min-w-0`) and the button uses `w-full` so it preserves the flex/grid behavior of the parent.
