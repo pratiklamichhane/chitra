@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -223,7 +224,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = new window.Image();
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -348,14 +349,15 @@ export function StudioPrintApp() {
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
-      onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
+      onHighlightStarted: (...args) => {
+        const { driver: tourDriver } = args[2];
         scrollTourTargetIntoView(sectionId);
         window.requestAnimationFrame(() => tourDriver.refresh());
       },
       popover: {
         title,
         description,
-        side,
+        side: side === "over" ? "bottom" : side,
         align,
       },
     }),
