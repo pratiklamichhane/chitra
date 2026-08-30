@@ -17,7 +17,7 @@ export function ImageUploader({ fileName, imageUrl, onImage }: ImageUploaderProp
     (file?: File) => {
       if (!file || !acceptedTypes.includes(file.type)) return;
       const url = URL.createObjectURL(file);
-      const img = new window.Image();
+      const img = document.createElement("img");
       img.onload = () => onImage(file, img, url);
       img.src = url;
     },
