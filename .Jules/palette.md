@@ -1,0 +1,5 @@
+## 2023-10-27 - Disabled Button Tooltips Accessibility
+
+**Learning:** When HTML buttons are disabled, they swallow all mouse events (like hovering) and are skipped in keyboard navigation (they cannot receive focus). This means any native tooltips added via the `title` attribute directly on the disabled `<button>` will not be displayed, creating an accessibility issue where the user doesn't know why a button is disabled.
+
+**Action:** To improve UX and accessibility for conditionally disabled buttons, wrap them in a `<span>` element. Apply the `title` attribute to the `<span>` instead, conditionally based on the disabled state. Additionally, to maintain keyboard focus order without introducing double tab-stops when enabled, apply `tabIndex={0}` to the `<span>` only when the button is disabled (e.g., `tabIndex={!canExport ? 0 : undefined}`). If the buttons are part of a flex or grid layout, ensure the span wrapper has `className="inline-flex w-full min-w-0"` and the button takes `w-full` to avoid breaking the layout.
