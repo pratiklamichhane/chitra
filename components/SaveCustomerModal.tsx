@@ -42,8 +42,8 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
         onSaved();
         onClose();
       }, 1500);
-    } catch (err: any) {
-      setError(err.message || "Failed to save customer");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to save customer photo");
     } finally {
       setLoading(false);
     }
@@ -77,11 +77,14 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
             <form onSubmit={handleSave} className="grid gap-4">
               <div className="preview-mini-container">
                 {imageBlob && (
-                  <img
-                    src={URL.createObjectURL(imageBlob)}
-                    alt="Preview"
-                    className="save-preview-img"
-                  />
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={URL.createObjectURL(imageBlob)}
+                      alt="Preview"
+                      className="preview-mini"
+                    />
+                  </>
                 )}
               </div>
 
