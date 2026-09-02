@@ -1,0 +1,3 @@
+## 2024-09-02 - Accessible tooltips for disabled grid buttons
+**Learning:** Adding accessible tooltips to disabled buttons within CSS grid layouts requires wrapping the button in a `span` (since disabled elements swallow mouse/focus events). However, simply adding the `span` can break the grid layout if it doesn't adopt the grid cell's dimensions.
+**Action:** When wrapping grid items for accessibility (like adding `title` and `tabIndex` to a disabled button), ensure the wrapper uses `display: inline-flex` (e.g., `inline-flex w-full min-w-0`) and the button uses `width: 100%` (e.g., `w-full`) to preserve the intended layout and prevent overflow.
