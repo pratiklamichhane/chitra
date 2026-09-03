@@ -108,6 +108,7 @@ function ProcessingInsight() {
   const [factIndex, setFactIndex] = useState(0);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const infoTimer = window.setTimeout(() => setVisible(true), 1800);
     const factTimer = window.setInterval(() => {
       setFactIndex((current) => (current + 1) % processingFacts.length);
