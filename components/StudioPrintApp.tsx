@@ -352,7 +352,9 @@ export function StudioPrintApp() {
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
         scrollTourTargetIntoView(sectionId);
-        window.requestAnimationFrame(() => tourDriver.refresh());
+        if (typeof window !== "undefined") {
+          window.requestAnimationFrame(() => tourDriver.refresh());
+        }
       },
       popover: {
         title,
