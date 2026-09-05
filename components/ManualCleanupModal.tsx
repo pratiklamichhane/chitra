@@ -61,6 +61,7 @@ export function ManualCleanupModal({
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     let resetTimer: number | null = null;
 
     if (!subjectCanvas) {

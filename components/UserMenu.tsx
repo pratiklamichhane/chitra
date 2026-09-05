@@ -34,6 +34,7 @@ export function UserMenu() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
@@ -94,7 +95,7 @@ export function UserMenu() {
   );
 }
 
-function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: any, onClose: () => void, children: React.ReactNode, className?: string }) {
+function Modal({ title, icon: Icon, onClose, children, className = "" }: { title: string, icon: React.ElementType, onClose: () => void, children: React.ReactNode, className?: string }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className={`modal-content minimal-modal ${className}`} onClick={e => e.stopPropagation()}>

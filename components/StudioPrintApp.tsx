@@ -176,11 +176,13 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
     return () => window.clearTimeout(readyTimer);
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -204,7 +206,9 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -218,12 +222,13 @@ export function StudioPrintApp() {
   }, [sourceImage]);
 
   const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
+    if (typeof document === "undefined") return;
     try {
       const res = await fetch(customer.photo_url);
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -232,6 +237,7 @@ export function StudioPrintApp() {
   }, [handleImage]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (!studioReady) return;
 
     const rail = controlRailRef.current;
@@ -313,6 +319,7 @@ export function StudioPrintApp() {
   }, [renderedSheet]);
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     setActiveSection(id);
     window.requestAnimationFrame(() => {
       const rail = controlRailRef.current;
@@ -323,6 +330,7 @@ export function StudioPrintApp() {
   }, []);
 
   const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     if (!sectionId) return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
@@ -344,11 +352,12 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
+        if (typeof window === "undefined") return;
         scrollTourTargetIntoView(sectionId);
         window.requestAnimationFrame(() => tourDriver.refresh());
       },
@@ -456,6 +465,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
