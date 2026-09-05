@@ -204,6 +204,7 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
     if (!sourceImage) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
@@ -219,6 +220,7 @@ export function StudioPrintApp() {
   }, [sourceImage]);
 
   const handleSelectCustomerPhoto = useCallback(async (customer: CustomerPhoto) => {
+    if (typeof document === "undefined") return;
     try {
       const res = await fetch(customer.photo_url);
       const blob = await res.blob();
@@ -314,6 +316,7 @@ export function StudioPrintApp() {
   }, [renderedSheet]);
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
+    if (typeof document === "undefined") return;
     setActiveSection(id);
     window.requestAnimationFrame(() => {
       const rail = controlRailRef.current;
@@ -324,6 +327,7 @@ export function StudioPrintApp() {
   }, []);
 
   const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
+    if (typeof document === "undefined") return;
     if (!sectionId) return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
@@ -457,6 +461,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
