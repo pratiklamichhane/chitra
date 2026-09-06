@@ -38,6 +38,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
+    if (typeof window === "undefined") {
+      setState((prev) => ({ ...prev, loading: false }));
+      return;
+    }
     const storedToken = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
     if (storedToken && storedUser) {
@@ -56,8 +60,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await apiLogin(email, password);
-    localStorage.setItem(TOKEN_KEY, response.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    if (typeof window !== "undefined") {
+      localStorage.setItem(TOKEN_KEY, response.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(response.user));
+    }
     setState({ user: response.user, token: response.token, loading: false, isAuthenticated: true });
   }, []);
 
@@ -67,8 +73,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem(USER_KEY);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+    }
     setState({ user: null, token: null, loading: false, isAuthenticated: false });
   }, []);
 
