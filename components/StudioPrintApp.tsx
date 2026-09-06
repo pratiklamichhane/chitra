@@ -433,7 +433,9 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
     tour.drive();
   }, [createTourStep, studioReady]);
 
@@ -446,7 +448,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!studioReady || autoTourStartedRef.current || typeof window === "undefined") return;
-    if (localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
+    if (typeof window !== "undefined" && localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
 
     autoTourStartedRef.current = true;
     const tourTimer = setTimeout(() => setTourWelcomeOpen(true), 450);
