@@ -34,13 +34,16 @@ export function UserMenu() {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof document === 'undefined') return;
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      if (typeof document !== 'undefined') document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   if (!user || !token) return null;
