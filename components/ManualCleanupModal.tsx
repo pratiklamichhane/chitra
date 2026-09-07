@@ -69,14 +69,16 @@ export function ManualCleanupModal({
       const preview = canvasRef.current;
       const ctx = preview?.getContext("2d");
       if (preview && ctx) ctx.clearRect(0, 0, preview.width, preview.height);
-      resetTimer = window.setTimeout(() => {
-        setCanvasSize(null);
-        setPointerPos(null);
-        setViewZoom(1);
-        clearHistory();
-      }, 0);
+      if (typeof window !== 'undefined') {
+        resetTimer = window.setTimeout(() => {
+          setCanvasSize(null);
+          setPointerPos(null);
+          setViewZoom(1);
+          clearHistory();
+        }, 0);
+      }
       return () => {
-        if (resetTimer !== null) window.clearTimeout(resetTimer);
+        if (typeof window !== 'undefined' && resetTimer !== null) window.clearTimeout(resetTimer);
       };
     }
 
@@ -84,14 +86,16 @@ export function ManualCleanupModal({
     originalCanvasRef.current = imageToCanvas(subjectCanvas);
     workingCanvasRef.current = imageToCanvas(subjectCanvas);
     drawPreview();
-    resetTimer = window.setTimeout(() => {
-      setCanvasSize({ width: subjectCanvas.width, height: subjectCanvas.height });
-      setViewZoom(1);
-      setPointerPos(null);
-      clearHistory();
-    }, 0);
+    if (typeof window !== 'undefined') {
+      resetTimer = window.setTimeout(() => {
+        setCanvasSize({ width: subjectCanvas.width, height: subjectCanvas.height });
+        setViewZoom(1);
+        setPointerPos(null);
+        clearHistory();
+      }, 0);
+    }
     return () => {
-      if (resetTimer !== null) window.clearTimeout(resetTimer);
+      if (typeof window !== 'undefined' && resetTimer !== null) window.clearTimeout(resetTimer);
     };
   }, [clearHistory, drawPreview, subjectCanvas, isOpen]);
 
