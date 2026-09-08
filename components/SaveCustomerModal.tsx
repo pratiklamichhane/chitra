@@ -76,10 +76,10 @@ export function SaveCustomerModal({ isOpen, onClose, imageBlob, onSaved }: SaveC
           ) : (
             <form onSubmit={handleSave} className="grid gap-4">
               <div className="preview-mini-container">
-                {imageBlob && (
+                {imageBlob && typeof window !== 'undefined' && (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={URL.createObjectURL(imageBlob)}
+                    src={window.URL.createObjectURL(imageBlob)}
                     alt="Preview"
                     className="save-preview-img"
                   />
