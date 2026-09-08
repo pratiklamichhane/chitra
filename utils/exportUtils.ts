@@ -1,15 +1,16 @@
 export async function canvasToPng(canvas: HTMLCanvasElement, fileName = "studio-print-sheet.png") {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
   const blob = await new Promise<Blob | null>((resolve) => {
     canvas.toBlob(resolve, "image/png", 1);
   });
 
   if (!blob) throw new Error("Could not create PNG export.");
-  const url = URL.createObjectURL(blob);
+  const url = window.URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
   link.click();
-  URL.revokeObjectURL(url);
+  window.URL.revokeObjectURL(url);
 }
 
 export async function canvasToPdf(
@@ -26,6 +27,7 @@ export async function canvasToPdf(
 }
 
 export function printCanvas(canvas: HTMLCanvasElement) {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
   const dataUrl = canvas.toDataURL("image/png", 1);
   const win = window.open("", "_blank");
   if (!win) {
