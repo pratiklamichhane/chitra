@@ -332,6 +332,7 @@ export function StudioPrintApp() {
   const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
     if (!sectionId) return;
     setActiveSection(sectionId);
+    if (typeof document === "undefined") return;
     const rail = controlRailRef.current;
     const section = document.getElementById(sectionId);
     if (!rail || !section) return;
@@ -436,7 +437,9 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
     tour.drive();
   }, [createTourStep, studioReady]);
 

@@ -62,7 +62,7 @@ export function ManualCleanupModal({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    let resetTimer: number | null = null;
+    let resetTimer: ReturnType<typeof setTimeout> | null = null;
 
     if (!subjectCanvas) {
       workingCanvasRef.current = null;
@@ -70,14 +70,14 @@ export function ManualCleanupModal({
       const preview = canvasRef.current;
       const ctx = preview?.getContext("2d");
       if (preview && ctx) ctx.clearRect(0, 0, preview.width, preview.height);
-      resetTimer = window.setTimeout(() => {
+      resetTimer = setTimeout(() => {
         setCanvasSize(null);
         setPointerPos(null);
         setViewZoom(1);
         clearHistory();
       }, 0);
       return () => {
-        if (resetTimer !== null) window.clearTimeout(resetTimer);
+        if (resetTimer !== null) clearTimeout(resetTimer);
       };
     }
 
@@ -85,14 +85,14 @@ export function ManualCleanupModal({
     originalCanvasRef.current = imageToCanvas(subjectCanvas);
     workingCanvasRef.current = imageToCanvas(subjectCanvas);
     drawPreview();
-    resetTimer = window.setTimeout(() => {
+    resetTimer = setTimeout(() => {
       setCanvasSize({ width: subjectCanvas.width, height: subjectCanvas.height });
       setViewZoom(1);
       setPointerPos(null);
       clearHistory();
     }, 0);
     return () => {
-      if (resetTimer !== null) window.clearTimeout(resetTimer);
+      if (resetTimer !== null) clearTimeout(resetTimer);
     };
   }, [clearHistory, drawPreview, subjectCanvas, isOpen]);
 
