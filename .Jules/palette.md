@@ -1,0 +1,3 @@
+## 2025-03-09 - Accessible Tooltips on Disabled Elements
+**Learning:** Disabled HTML elements (like buttons) swallow mouse events and cannot receive keyboard focus, meaning native tooltips (via `title`) or hover state CSS won't trigger. Wrapping a disabled element in a `<span title="...">` exposes the tooltip to mouse users, but keyboard users still miss out.
+**Action:** When adding tooltips to disabled buttons, wrap them in a `<span>` with the `title` attribute, and conditionally add `tabIndex={0}` to the wrapper *only* when the child is disabled (e.g., `tabIndex={isDisabled ? 0 : undefined}`). If it's part of a flex/grid layout, ensure the wrapper uses `inline-flex` and appropriate width constraints so it doesn't break the layout.
