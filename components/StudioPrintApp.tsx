@@ -176,11 +176,13 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
     return () => window.clearTimeout(readyTimer);
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -209,6 +211,7 @@ export function StudioPrintApp() {
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === "undefined") return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -224,6 +227,7 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
+      if (typeof document === "undefined") return;
       const img = document.createElement('img');
       img.onload = () => handleImage(file, img, url);
       img.src = url;
@@ -233,6 +237,7 @@ export function StudioPrintApp() {
   }, [handleImage]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     if (!studioReady) return;
 
     const rail = controlRailRef.current;
@@ -314,6 +319,7 @@ export function StudioPrintApp() {
   }, [renderedSheet]);
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     setActiveSection(id);
     window.requestAnimationFrame(() => {
       const rail = controlRailRef.current;
@@ -350,6 +356,7 @@ export function StudioPrintApp() {
     }): DriveStep => ({
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
+        if (typeof window === "undefined") return;
         scrollTourTargetIntoView(sectionId);
         window.requestAnimationFrame(() => tourDriver.refresh());
       },
@@ -457,6 +464,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
