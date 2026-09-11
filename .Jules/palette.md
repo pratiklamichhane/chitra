@@ -1,0 +1,3 @@
+## 2024-02-12 - Disabled Button Tooltips with Flex Layouts
+**Learning:** Adding a wrapper span for disabled button tooltips (`title` attribute) in CSS Grid or Flex layouts breaks the element sizing if not styled correctly. Also, a disabled button cannot receive keyboard focus, so adding `tabIndex=0` to the wrapper allows keyboard/screen-reader users to access the tooltip.
+**Action:** Always apply layout-preserving utility classes to the tooltip wrapper (e.g., `className="inline-flex w-full min-w-0"`) and force the child button to expand (`className="w-full"`). Ensure `tabIndex` is applied conditionally `tabIndex={isDisabled ? 0 : undefined}` to prevent double tab-stops when enabled.
