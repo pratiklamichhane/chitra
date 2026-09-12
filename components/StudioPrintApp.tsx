@@ -176,11 +176,12 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
-    const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
-    return () => window.clearTimeout(readyTimer);
+    const readyTimer = setTimeout(() => setStudioReady(true), 850);
+    return () => clearTimeout(readyTimer);
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -205,9 +206,11 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === "undefined") return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -223,7 +226,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === 'undefined') return;
+      const img = document.createElement('img');
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -255,6 +259,7 @@ export function StudioPrintApp() {
 
     const scheduleUpdate = () => {
       if (sectionSpyFrameRef.current !== null) return;
+      if (typeof window === "undefined") return;
       sectionSpyFrameRef.current = window.requestAnimationFrame(updateActiveSection);
     };
 
@@ -262,6 +267,7 @@ export function StudioPrintApp() {
     rail.addEventListener("scroll", scheduleUpdate, { passive: true });
     return () => {
       rail.removeEventListener("scroll", scheduleUpdate);
+      if (typeof window === "undefined") return;
       if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
     };
   }, [studioReady]);
@@ -314,7 +320,9 @@ export function StudioPrintApp() {
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
+    if (typeof window === "undefined") return;
     window.requestAnimationFrame(() => {
+      if (typeof document === "undefined") return;
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
       if (!rail || !section) return;
@@ -325,6 +333,7 @@ export function StudioPrintApp() {
   const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
     if (!sectionId) return;
     setActiveSection(sectionId);
+    if (typeof document === "undefined") return;
     const rail = controlRailRef.current;
     const section = document.getElementById(sectionId);
     if (!rail || !section) return;
@@ -344,13 +353,15 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
         scrollTourTargetIntoView(sectionId);
-        window.requestAnimationFrame(() => tourDriver.refresh());
+        if (typeof window !== "undefined") {
+          window.requestAnimationFrame(() => tourDriver.refresh());
+        }
       },
       popover: {
         title,
@@ -428,7 +439,9 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
     tour.drive();
   }, [createTourStep, studioReady]);
 
@@ -444,8 +457,8 @@ export function StudioPrintApp() {
     if (window.localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
 
     autoTourStartedRef.current = true;
-    const tourTimer = window.setTimeout(() => setTourWelcomeOpen(true), 450);
-    return () => window.clearTimeout(tourTimer);
+    const tourTimer = setTimeout(() => setTourWelcomeOpen(true), 450);
+    return () => clearTimeout(tourTimer);
   }, [studioReady]);
 
   useEffect(() => {
@@ -456,6 +469,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
