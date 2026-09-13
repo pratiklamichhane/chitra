@@ -320,7 +320,7 @@ export function StudioPrintApp() {
     setActiveSection(id);
     requestAnimationFrame(() => {
       const rail = controlRailRef.current;
-      const section = document.getElementById(id);
+      const section = typeof document !== 'undefined' ? document.getElementById(id) : null;
       if (!rail || !section) return;
       rail.scrollTo({ top: section.offsetTop, behavior: "smooth" });
     });
@@ -330,7 +330,7 @@ export function StudioPrintApp() {
     if (!sectionId) return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
-    const section = document.getElementById(sectionId);
+    const section = typeof document !== 'undefined' ? document.getElementById(sectionId) : null;
     if (!rail || !section) return;
     rail.scrollTo({ top: section.offsetTop, behavior: "auto" });
   }, []);
@@ -460,6 +460,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === 'undefined') return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
