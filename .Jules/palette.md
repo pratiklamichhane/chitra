@@ -1,0 +1,3 @@
+## 2024-05-24 - Conditionally disabled button accessibility in flex/grid layouts
+**Learning:** Adding a `tabIndex=0` wrapper to disabled buttons for accessibility breaks grid layouts (like `.export-grid`) if the wrapper isn't configured correctly. The wrapper must have `display: inline-flex` (e.g., `inline-flex w-full min-w-0`) and the button must span the full width of the wrapper (`w-full`) to preserve the component's layout boundaries.
+**Action:** When wrapping buttons for accessibility in flex/grid contexts, ensure the wrapper adopts the necessary layout constraints (`inline-flex`, `w-full`, `min-w-0`) and pass `w-full` to the child button.
