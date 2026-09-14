@@ -1,4 +1,5 @@
 export async function canvasToPng(canvas: HTMLCanvasElement, fileName = "studio-print-sheet.png") {
+  if (typeof document === "undefined") return;
   const blob = await new Promise<Blob | null>((resolve) => {
     canvas.toBlob(resolve, "image/png", 1);
   });
