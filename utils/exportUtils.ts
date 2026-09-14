@@ -26,6 +26,7 @@ export async function canvasToPdf(
 }
 
 export function printCanvas(canvas: HTMLCanvasElement) {
+  if (typeof window === "undefined") return;
   const dataUrl = canvas.toDataURL("image/png", 1);
   const win = window.open("", "_blank");
   if (!win) {
