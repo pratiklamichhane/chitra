@@ -208,6 +208,7 @@ export function StudioPrintApp() {
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === "undefined") return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -315,6 +316,7 @@ export function StudioPrintApp() {
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     window.requestAnimationFrame(() => {
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
@@ -327,6 +329,7 @@ export function StudioPrintApp() {
     if (!sectionId) return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
+    if (typeof document === "undefined") return;
     const section = document.getElementById(sectionId);
     if (!rail || !section) return;
     rail.scrollTo({ top: section.offsetTop, behavior: "auto" });
@@ -457,6 +460,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
