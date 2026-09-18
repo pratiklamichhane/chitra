@@ -208,6 +208,7 @@ export function StudioPrintApp() {
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === "undefined") return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -223,7 +224,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === "undefined") return;
+      const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -314,6 +316,7 @@ export function StudioPrintApp() {
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
+    if (typeof window === "undefined" || typeof document === "undefined") return;
     window.requestAnimationFrame(() => {
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
@@ -326,6 +329,7 @@ export function StudioPrintApp() {
     if (!sectionId) return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
+    if (typeof document === "undefined") return;
     const section = document.getElementById(sectionId);
     if (!rail || !section) return;
     rail.scrollTo({ top: section.offsetTop, behavior: "auto" });
@@ -344,7 +348,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -456,6 +460,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === "undefined") return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
@@ -491,15 +496,21 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span className="inline-flex w-full min-w-0" title={!canExport ? "Process a photo first" : "Export PNG"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button w-full" disabled={!canExport} onClick={exportPng}>
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span className="inline-flex w-full min-w-0" title={!canExport ? "Process a photo first" : "Export PDF"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button w-full" disabled={!canExport} onClick={exportPdf}>
+                <FileText size={16} />
+              </button>
+            </span>
+            <span className="inline-flex w-full min-w-0" title={!canExport ? "Process a photo first" : "Print"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button w-full" disabled={!canExport} onClick={print}>
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
             <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
