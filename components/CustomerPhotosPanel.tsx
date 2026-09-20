@@ -14,7 +14,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
   const [photos, setPhotos] = useState<CustomerPhoto[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
 
   useEffect(() => {
     if (!token) return;
@@ -25,7 +25,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
         const response = await getPhotos(token, search, page);
         setPhotos(response.data);
       } catch (error) {
-        console.error("Failed to fetch photos:", error);
+        console.error("Failed to fetch photos:", error instanceof Error ? error.message : "Unknown error");
       } finally {
         setLoading(false);
       }
@@ -71,6 +71,7 @@ export function CustomerPhotosPanel({ onSelectPhoto }: CustomerPhotosPanelProps)
                 onClick={() => onSelectPhoto(photo)}
               >
                 <div className="customer-thumb">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photo.photo_url} alt={photo.customer_name} />
                 </div>
                 <div className="customer-info">
