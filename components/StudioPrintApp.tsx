@@ -318,6 +318,7 @@ export function StudioPrintApp() {
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
     window.requestAnimationFrame(() => {
+      if (typeof document === 'undefined') return;
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
       if (!rail || !section) return;
@@ -327,6 +328,7 @@ export function StudioPrintApp() {
 
   const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
     if (!sectionId) return;
+    if (typeof document === 'undefined') return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
     const section = document.getElementById(sectionId);
@@ -459,6 +461,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === 'undefined') return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
