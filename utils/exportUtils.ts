@@ -5,10 +5,12 @@ export async function canvasToPng(canvas: HTMLCanvasElement, fileName = "studio-
 
   if (!blob) throw new Error("Could not create PNG export.");
   const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  link.click();
+  if (typeof document !== 'undefined') {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+  }
   URL.revokeObjectURL(url);
 }
 
