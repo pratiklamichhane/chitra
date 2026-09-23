@@ -13,6 +13,9 @@ export type BackgroundFill = {
 };
 
 export function createCanvas(width: number, height: number): HTMLCanvasElement {
+  if (typeof document === 'undefined') {
+    throw new Error("createCanvas can only be called in the browser environment.");
+  }
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, Math.round(width));
   canvas.height = Math.max(1, Math.round(height));
