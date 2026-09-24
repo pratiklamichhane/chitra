@@ -181,6 +181,7 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const mobileQuery = matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -430,7 +431,9 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
     tour.drive();
   }, [createTourStep, studioReady]);
 
