@@ -491,15 +491,33 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span
+              className="inline-flex"
+              title={!canExport ? "Process a photo to enable export" : undefined}
+              tabIndex={!canExport ? 0 : undefined}
+            >
+              <button className="chrome-button" aria-label="Export PNG" title={canExport ? "Export PNG" : undefined} disabled={!canExport} onClick={exportPng}>
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span
+              className="inline-flex"
+              title={!canExport ? "Process a photo to enable export" : undefined}
+              tabIndex={!canExport ? 0 : undefined}
+            >
+              <button className="chrome-button" aria-label="Export PDF" title={canExport ? "Export PDF" : undefined} disabled={!canExport} onClick={exportPdf}>
+                <FileText size={16} />
+              </button>
+            </span>
+            <span
+              className="inline-flex"
+              title={!canExport ? "Process a photo to enable export" : undefined}
+              tabIndex={!canExport ? 0 : undefined}
+            >
+              <button className="chrome-button" aria-label="Print" title={canExport ? "Print" : undefined} disabled={!canExport} onClick={print}>
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
             <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
