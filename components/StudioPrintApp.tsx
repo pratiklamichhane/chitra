@@ -344,7 +344,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -491,15 +491,21 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span className="inline-flex" title={!canExport ? "Upload an image to export" : "Export PNG"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" disabled={!canExport} onClick={exportPng} aria-label="Export PNG">
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={!canExport ? "Upload an image to export" : "Export PDF"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" disabled={!canExport} onClick={exportPdf} aria-label="Export PDF">
+                <FileText size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={!canExport ? "Upload an image to print" : "Print"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" disabled={!canExport} onClick={print} aria-label="Print">
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
             <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
