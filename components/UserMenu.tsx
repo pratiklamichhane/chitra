@@ -39,6 +39,7 @@ export function UserMenu() {
         setIsOpen(false);
       }
     };
+    if (typeof document === "undefined") return;
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
