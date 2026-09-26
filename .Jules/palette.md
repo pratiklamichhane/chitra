@@ -1,0 +1,3 @@
+## 2024-05-24 - Tooltips on Disabled Buttons Accessibility Pattern
+**Learning:** In React, adding tooltips to inherently disabled native HTML elements (like `<button disabled>`) doesn't work for keyboard/screen-reader users because disabled elements are removed from the native tab sequence and swallow pointer events.
+**Action:** When adding tooltips to explain disabled states, wrap the button in a layout-preserving `<span>` (e.g., `inline-flex w-full min-w-0`), conditionally apply the `title` attribute to the wrapper, and strictly apply `tabIndex={0}` ONLY when disabled (e.g., `tabIndex={!canExport ? 0 : undefined}`) to avoid creating a double focus stop when the button becomes active.
