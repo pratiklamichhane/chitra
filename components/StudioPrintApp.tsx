@@ -330,6 +330,7 @@ export function StudioPrintApp() {
     if (!sectionId) return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
+    if (typeof document === 'undefined') return;
     const section = document.getElementById(sectionId);
     if (!rail || !section) return;
     rail.scrollTo({ top: section.offsetTop, behavior: "auto" });
@@ -460,6 +461,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === 'undefined') return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
