@@ -176,12 +176,13 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
-    const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
-    return () => window.clearTimeout(readyTimer);
+    const readyTimer: ReturnType<typeof setTimeout> = setTimeout(() => setStudioReady(true), 850);
+    return () => clearTimeout(readyTimer);
   }, []);
 
   useEffect(() => {
-    const mobileQuery = window.matchMedia("(max-width: 760px)");
+    if (typeof matchMedia === "undefined") return;
+    const mobileQuery = matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
     updateMobileWarning();
@@ -257,14 +258,17 @@ export function StudioPrintApp() {
 
     const scheduleUpdate = () => {
       if (sectionSpyFrameRef.current !== null) return;
-      sectionSpyFrameRef.current = window.requestAnimationFrame(updateActiveSection);
+      if (typeof requestAnimationFrame === "undefined") return;
+      sectionSpyFrameRef.current = requestAnimationFrame(updateActiveSection);
     };
 
     updateActiveSection();
     rail.addEventListener("scroll", scheduleUpdate, { passive: true });
     return () => {
       rail.removeEventListener("scroll", scheduleUpdate);
-      if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
+      if (sectionSpyFrameRef.current !== null && typeof cancelAnimationFrame !== "undefined") {
+        cancelAnimationFrame(sectionSpyFrameRef.current);
+      }
     };
   }, [studioReady]);
 
@@ -316,9 +320,10 @@ export function StudioPrintApp() {
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
-    window.requestAnimationFrame(() => {
+    if (typeof requestAnimationFrame === "undefined") return;
+    requestAnimationFrame(() => {
       const rail = controlRailRef.current;
-      const section = document.getElementById(id);
+      const section = typeof document !== "undefined" ? document.getElementById(id) : null;
       if (!rail || !section) return;
       rail.scrollTo({ top: section.offsetTop, behavior: "smooth" });
     });
@@ -352,7 +357,9 @@ export function StudioPrintApp() {
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
         scrollTourTargetIntoView(sectionId);
-        window.requestAnimationFrame(() => tourDriver.refresh());
+        if (typeof requestAnimationFrame !== "undefined") {
+          requestAnimationFrame(() => tourDriver.refresh());
+        }
       },
       popover: {
         title,
@@ -430,24 +437,26 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
     tour.drive();
   }, [createTourStep, studioReady]);
 
   const dismissTourWelcome = useCallback(() => {
     setTourWelcomeOpen(false);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     }
   }, []);
 
   useEffect(() => {
-    if (!studioReady || autoTourStartedRef.current || typeof window === "undefined") return;
-    if (window.localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
+    if (!studioReady || autoTourStartedRef.current || typeof localStorage === "undefined") return;
+    if (localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
 
     autoTourStartedRef.current = true;
-    const tourTimer = window.setTimeout(() => setTourWelcomeOpen(true), 450);
-    return () => window.clearTimeout(tourTimer);
+    const tourTimer: ReturnType<typeof setTimeout> = setTimeout(() => setTourWelcomeOpen(true), 450);
+    return () => clearTimeout(tourTimer);
   }, [studioReady]);
 
   useEffect(() => {
