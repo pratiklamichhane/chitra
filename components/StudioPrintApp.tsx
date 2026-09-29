@@ -223,8 +223,9 @@ export function StudioPrintApp() {
       const res = await fetch(customer.photo_url);
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
+      if (typeof document === "undefined") return;
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
