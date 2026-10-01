@@ -181,8 +181,8 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mobileQuery = window.matchMedia("(max-width: 760px)");
+    if (typeof matchMedia === 'undefined') return;
+    const mobileQuery = matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
     updateMobileWarning();
