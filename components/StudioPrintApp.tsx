@@ -181,6 +181,7 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof matchMedia === "undefined") return;
     const mobileQuery = matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -430,20 +431,20 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof localStorage !== "undefined") localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     tour.drive();
   }, [createTourStep, studioReady]);
 
   const dismissTourWelcome = useCallback(() => {
     setTourWelcomeOpen(false);
-    if (typeof window !== "undefined") {
+    if (typeof localStorage !== "undefined") {
       localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     }
   }, []);
 
   useEffect(() => {
     if (!studioReady || autoTourStartedRef.current || typeof window === "undefined") return;
-    if (localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
+    if (typeof localStorage !== "undefined" && localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
 
     autoTourStartedRef.current = true;
     const tourTimer = setTimeout(() => setTourWelcomeOpen(true), 450);
