@@ -73,7 +73,7 @@ const STUDIO_TOUR_STORAGE_KEY = "chitra:studio-tour-seen";
 export function StudioPrintApp() {
   const appShellRef = useRef<HTMLDivElement | null>(null);
   const controlRailRef = useRef<HTMLElement | null>(null);
-  const sectionSpyFrameRef = useRef<number | null>(null);
+  const sectionSpyFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const tourRef = useRef<Driver | null>(null);
   const autoTourStartedRef = useRef(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -257,14 +257,14 @@ export function StudioPrintApp() {
 
     const scheduleUpdate = () => {
       if (sectionSpyFrameRef.current !== null) return;
-      sectionSpyFrameRef.current = window.requestAnimationFrame(updateActiveSection);
+      sectionSpyFrameRef.current = requestAnimationFrame(updateActiveSection);
     };
 
     updateActiveSection();
     rail.addEventListener("scroll", scheduleUpdate, { passive: true });
     return () => {
       rail.removeEventListener("scroll", scheduleUpdate);
-      if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
+      if (sectionSpyFrameRef.current !== null) cancelAnimationFrame(sectionSpyFrameRef.current);
     };
   }, [studioReady]);
 
