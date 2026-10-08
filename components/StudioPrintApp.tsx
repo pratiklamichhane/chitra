@@ -73,7 +73,7 @@ const STUDIO_TOUR_STORAGE_KEY = "chitra:studio-tour-seen";
 export function StudioPrintApp() {
   const appShellRef = useRef<HTMLDivElement | null>(null);
   const controlRailRef = useRef<HTMLElement | null>(null);
-  const sectionSpyFrameRef = useRef<number | null>(null);
+  const sectionSpyFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const tourRef = useRef<Driver | null>(null);
   const autoTourStartedRef = useRef(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -223,7 +224,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === 'undefined') return;
+      const img = document.createElement('img');
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -255,14 +257,14 @@ export function StudioPrintApp() {
 
     const scheduleUpdate = () => {
       if (sectionSpyFrameRef.current !== null) return;
-      sectionSpyFrameRef.current = window.requestAnimationFrame(updateActiveSection);
+      sectionSpyFrameRef.current = requestAnimationFrame(updateActiveSection);
     };
 
     updateActiveSection();
     rail.addEventListener("scroll", scheduleUpdate, { passive: true });
     return () => {
       rail.removeEventListener("scroll", scheduleUpdate);
-      if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
+      if (sectionSpyFrameRef.current !== null) cancelAnimationFrame(sectionSpyFrameRef.current);
     };
   }, [studioReady]);
 
@@ -344,7 +346,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
