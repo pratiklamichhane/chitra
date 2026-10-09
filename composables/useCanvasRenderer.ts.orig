@@ -21,7 +21,6 @@ export function createCanvas(width: number, height: number): HTMLCanvasElement {
 }
 
 export function imageToCanvas(source: HTMLImageElement | HTMLCanvasElement): HTMLCanvasElement {
-  if (typeof document === 'undefined') return source as HTMLCanvasElement;
   const canvas = createCanvas(source.width, source.height);
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Canvas is not available in this browser.");
