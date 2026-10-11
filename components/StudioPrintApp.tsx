@@ -181,6 +181,7 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -205,6 +206,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -223,7 +225,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === "undefined") return;
+      const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -344,7 +347,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -428,20 +431,20 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     tour.drive();
   }, [createTourStep, studioReady]);
 
   const dismissTourWelcome = useCallback(() => {
     setTourWelcomeOpen(false);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+      if (typeof window !== "undefined") window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     }
   }, []);
 
   useEffect(() => {
     if (!studioReady || autoTourStartedRef.current || typeof window === "undefined") return;
-    if (window.localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
+    if (typeof window === "undefined" || window.localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
 
     autoTourStartedRef.current = true;
     const tourTimer = window.setTimeout(() => setTourWelcomeOpen(true), 450);

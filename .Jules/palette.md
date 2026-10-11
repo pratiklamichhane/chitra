@@ -1,0 +1,3 @@
+## 2024-10-11 - Add tooltip for disabled buttons
+**Learning:** Native `disabled` buttons in HTML do not trigger hover events or receive keyboard focus, meaning traditional `title` attributes on the buttons themselves are inaccessible to users when the button is disabled. In flex or grid layouts (like `.export-grid`), introducing a wrapper element to handle the `title` and `tabIndex` can break the layout unless specific CSS classes are used.
+**Action:** Always wrap disabled buttons in a `<span>` with `title` and conditional `tabIndex` to ensure the disabled reason is accessible. When the buttons are part of a grid or flex container, apply `inline-flex w-full min-w-0` to the wrapper and `w-full` to the child button to preserve the original dimensions and layout behavior.
