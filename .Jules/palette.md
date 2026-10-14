@@ -1,0 +1,3 @@
+## 2025-01-20 - Ensure Conditionally Enabled Fallback Tooltips for Button Wrappers
+**Learning:** When moving a `title` attribute from a disabled button to a wrapper `span` (because disabled elements swallow hover events), the tooltip must conditionally fallback to its default text when the button is enabled. If it simply falls back to `undefined`, sighted users lose the native hover tooltip for icon-only buttons entirely, causing a minor usability regression despite improving accessibility for disabled states.
+**Action:** Always ensure the wrapper's `title` conditionally renders the original intent when active (e.g., `title={!isDisabled ? 'Original Title' : 'Disabled Reason'}`).

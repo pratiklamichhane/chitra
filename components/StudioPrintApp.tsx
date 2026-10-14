@@ -73,7 +73,7 @@ const STUDIO_TOUR_STORAGE_KEY = "chitra:studio-tour-seen";
 export function StudioPrintApp() {
   const appShellRef = useRef<HTMLDivElement | null>(null);
   const controlRailRef = useRef<HTMLElement | null>(null);
-  const sectionSpyFrameRef = useRef<number | null>(null);
+  const sectionSpyFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const tourRef = useRef<Driver | null>(null);
   const autoTourStartedRef = useRef(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -176,11 +176,12 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
-    const readyTimer = window.setTimeout(() => setStudioReady(true), 850);
-    return () => window.clearTimeout(readyTimer);
+    const readyTimer = setTimeout(() => setStudioReady(true), 850);
+    return () => clearTimeout(readyTimer);
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -205,9 +206,11 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === 'undefined') return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -223,7 +226,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === 'undefined') return;
+      const img = document.createElement('img');
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -255,14 +259,14 @@ export function StudioPrintApp() {
 
     const scheduleUpdate = () => {
       if (sectionSpyFrameRef.current !== null) return;
-      sectionSpyFrameRef.current = window.requestAnimationFrame(updateActiveSection);
+      sectionSpyFrameRef.current = requestAnimationFrame(updateActiveSection);
     };
 
     updateActiveSection();
     rail.addEventListener("scroll", scheduleUpdate, { passive: true });
     return () => {
       rail.removeEventListener("scroll", scheduleUpdate);
-      if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
+      if (sectionSpyFrameRef.current !== null) cancelAnimationFrame(sectionSpyFrameRef.current);
     };
   }, [studioReady]);
 
@@ -314,7 +318,7 @@ export function StudioPrintApp() {
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
-    window.requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
       if (!rail || !section) return;
@@ -344,13 +348,13 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
         scrollTourTargetIntoView(sectionId);
-        window.requestAnimationFrame(() => tourDriver.refresh());
+        requestAnimationFrame(() => tourDriver.refresh());
       },
       popover: {
         title,
@@ -428,7 +432,7 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     tour.drive();
   }, [createTourStep, studioReady]);
 
@@ -444,8 +448,8 @@ export function StudioPrintApp() {
     if (window.localStorage.getItem(STUDIO_TOUR_STORAGE_KEY)) return;
 
     autoTourStartedRef.current = true;
-    const tourTimer = window.setTimeout(() => setTourWelcomeOpen(true), 450);
-    return () => window.clearTimeout(tourTimer);
+    const tourTimer = setTimeout(() => setTourWelcomeOpen(true), 450);
+    return () => clearTimeout(tourTimer);
   }, [studioReady]);
 
   useEffect(() => {
@@ -461,6 +465,7 @@ export function StudioPrintApp() {
       webkitExitFullscreen?: () => Promise<void>;
     };
     const shell = appShellRef.current as (HTMLDivElement & { webkitRequestFullscreen?: () => Promise<void> }) | null;
+    if (typeof document === 'undefined') return;
     if (document.fullscreenElement || currentDocument.webkitFullscreenElement) {
       if (document.exitFullscreen) void document.exitFullscreen();
       else void currentDocument.webkitExitFullscreen?.();
@@ -491,15 +496,21 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span className="inline-flex min-w-0" title={!canExport ? "Process an image to enable PNG export" : "Export PNG"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button w-full" aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span className="inline-flex min-w-0" title={!canExport ? "Process an image to enable PDF export" : "Export PDF"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button w-full" aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
+                <FileText size={16} />
+              </button>
+            </span>
+            <span className="inline-flex min-w-0" title={!canExport ? "Process an image to enable printing" : "Print"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button w-full" aria-label="Print" disabled={!canExport} onClick={print}>
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
             <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
