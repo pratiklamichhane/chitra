@@ -76,7 +76,7 @@ export function ManualCleanupModal({
         clearHistory();
       }, 0);
       return () => {
-        if (resetTimer !== null) window.clearTimeout(resetTimer);
+        if (resetTimer !== null) clearTimeout(resetTimer);
       };
     }
 
@@ -91,7 +91,7 @@ export function ManualCleanupModal({
       clearHistory();
     }, 0);
     return () => {
-      if (resetTimer !== null) window.clearTimeout(resetTimer);
+      if (resetTimer !== null) clearTimeout(resetTimer);
     };
   }, [clearHistory, drawPreview, subjectCanvas, isOpen]);
 

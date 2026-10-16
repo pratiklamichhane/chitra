@@ -259,14 +259,14 @@ export function StudioPrintApp() {
 
     const scheduleUpdate = () => {
       if (sectionSpyFrameRef.current !== null) return;
-      sectionSpyFrameRef.current = window.requestAnimationFrame(updateActiveSection);
+      sectionSpyFrameRef.current = requestAnimationFrame(updateActiveSection);
     };
 
     updateActiveSection();
     rail.addEventListener("scroll", scheduleUpdate, { passive: true });
     return () => {
       rail.removeEventListener("scroll", scheduleUpdate);
-      if (sectionSpyFrameRef.current !== null) window.cancelAnimationFrame(sectionSpyFrameRef.current);
+      if (sectionSpyFrameRef.current !== null) cancelAnimationFrame(sectionSpyFrameRef.current);
     };
   }, [studioReady]);
 
@@ -318,7 +318,8 @@ export function StudioPrintApp() {
 
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
-    window.requestAnimationFrame(() => {
+    if (typeof window === 'undefined') return;
+    requestAnimationFrame(() => {
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
       if (!rail || !section) return;
@@ -354,7 +355,7 @@ export function StudioPrintApp() {
       element,
       onHighlightStarted: (_element, _step, { driver: tourDriver }) => {
         scrollTourTargetIntoView(sectionId);
-        window.requestAnimationFrame(() => tourDriver.refresh());
+        if (typeof window !== 'undefined') requestAnimationFrame(() => tourDriver.refresh());
       },
       popover: {
         title,
