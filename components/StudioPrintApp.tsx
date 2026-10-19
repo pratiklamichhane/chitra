@@ -205,6 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
@@ -227,8 +228,8 @@ export function StudioPrintApp() {
       const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
-    } catch (error) {
-      console.error("Failed to load customer photo:", error);
+    } catch (error: unknown) {
+      console.error("Failed to load customer photo:", error instanceof Error ? error.message : "Default error");
     }
   }, [handleImage]);
 
