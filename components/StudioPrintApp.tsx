@@ -181,6 +181,7 @@ export function StudioPrintApp() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const mobileQuery = window.matchMedia("(max-width: 760px)");
     const updateMobileWarning = () => setShowMobileWarning(mobileQuery.matches);
 
@@ -223,7 +224,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === 'undefined') return;
+      const img = document.createElement('img');
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -344,7 +346,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -428,14 +430,14 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== 'undefined') window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     tour.drive();
   }, [createTourStep, studioReady]);
 
   const dismissTourWelcome = useCallback(() => {
     setTourWelcomeOpen(false);
     if (typeof window !== "undefined") {
-      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+      if (typeof window !== 'undefined') window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
     }
   }, []);
 
@@ -491,20 +493,26 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span className="inline-flex" title={!canExport ? "Upload a photo to export" : "Export PNG"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={!canExport ? "Upload a photo to export" : "Export PDF"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
+                <FileText size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={!canExport ? "Upload a photo to export" : "Print"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Print" disabled={!canExport} onClick={print}>
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
-            <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
+            <button className="chrome-button" title="Show tour" aria-label="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
             </button>
-            <button className="chrome-button" title="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
+            <button className="chrome-button" title="Fullscreen" aria-label="Fullscreen" onClick={toggleFullscreen}><Maximize2 size={16} /></button>
             <span className="topbar-action-sep" />
             <UserMenu />
           </div>
