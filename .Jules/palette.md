@@ -1,0 +1,3 @@
+## 2024-05-18 - Tooltips on disabled buttons
+**Learning:** Native OS tooltips on disabled HTML elements are completely inaccessible to keyboard users and typically don't show on hover for mouse users.
+**Action:** When adding tooltips to disabled buttons, wrap them in a `<span>` element that has the `title` attribute, ensuring the `title` conditionally explains the disabled state. For accessibility, also add `tabIndex={!isEnabled ? 0 : undefined}` to the wrapper so keyboard users can focus and hear the reason. Move any original `title` on the button itself to an `aria-label` to preserve screen reader behavior when enabled.
