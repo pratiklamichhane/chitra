@@ -205,9 +205,11 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === 'undefined') return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -223,7 +225,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === 'undefined') return;
+      const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -315,6 +318,7 @@ export function StudioPrintApp() {
   const scrollToSection = useCallback((id: (typeof workflowSections)[number]["id"]) => {
     setActiveSection(id);
     window.requestAnimationFrame(() => {
+      if (typeof document === 'undefined') return;
       const rail = controlRailRef.current;
       const section = document.getElementById(id);
       if (!rail || !section) return;
@@ -324,6 +328,7 @@ export function StudioPrintApp() {
 
   const scrollTourTargetIntoView = useCallback((sectionId?: (typeof workflowSections)[number]["id"]) => {
     if (!sectionId) return;
+    if (typeof document === 'undefined') return;
     setActiveSection(sectionId);
     const rail = controlRailRef.current;
     const section = document.getElementById(sectionId);
@@ -344,7 +349,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -456,6 +461,7 @@ export function StudioPrintApp() {
   }, []);
 
   const toggleFullscreen = useCallback(() => {
+    if (typeof document === 'undefined') return;
     const currentDocument = document as Document & {
       webkitFullscreenElement?: Element | null;
       webkitExitFullscreen?: () => Promise<void>;
