@@ -11,13 +11,13 @@ type SegmentationResult = {
 
 function waitForProcessingPaint() {
   return new Promise<void>((resolve) => {
-    if (typeof window === "undefined" || typeof window.requestAnimationFrame !== "function") {
+    if (typeof window === "undefined" || typeof requestAnimationFrame !== "function") {
       setTimeout(resolve, 0);
       return;
     }
 
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => resolve());
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => resolve());
     });
   });
 }
