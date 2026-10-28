@@ -5,6 +5,7 @@ export async function canvasToPng(canvas: HTMLCanvasElement, fileName = "studio-
 
   if (!blob) throw new Error("Could not create PNG export.");
   const url = URL.createObjectURL(blob);
+  if (typeof document === 'undefined') return;
   const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
@@ -26,6 +27,7 @@ export async function canvasToPdf(
 }
 
 export function printCanvas(canvas: HTMLCanvasElement) {
+  if (typeof window === 'undefined') return;
   const dataUrl = canvas.toDataURL("image/png", 1);
   const win = window.open("", "_blank");
   if (!win) {
