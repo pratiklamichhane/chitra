@@ -1,4 +1,5 @@
 export async function canvasToPng(canvas: HTMLCanvasElement, fileName = "studio-print-sheet.png") {
+  if (typeof document === "undefined") return;
   const blob = await new Promise<Blob | null>((resolve) => {
     canvas.toBlob(resolve, "image/png", 1);
   });
@@ -26,6 +27,7 @@ export async function canvasToPdf(
 }
 
 export function printCanvas(canvas: HTMLCanvasElement) {
+  if (typeof window === "undefined" || typeof document === "undefined") return;
   const dataUrl = canvas.toDataURL("image/png", 1);
   const win = window.open("", "_blank");
   if (!win) {
