@@ -16,8 +16,8 @@ function waitForProcessingPaint() {
       return;
     }
 
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => resolve());
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => resolve());
     });
   });
 }
