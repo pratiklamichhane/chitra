@@ -108,14 +108,14 @@ function ProcessingInsight() {
   const [factIndex, setFactIndex] = useState(0);
 
   useEffect(() => {
-    const infoTimer = window.setTimeout(() => setVisible(true), 1800);
-    const factTimer = window.setInterval(() => {
+    const infoTimer = setTimeout(() => setVisible(true), 1800);
+    const factTimer = setInterval(() => {
       setFactIndex((current) => (current + 1) % processingFacts.length);
     }, 3200);
 
     return () => {
-      window.clearTimeout(infoTimer);
-      window.clearInterval(factTimer);
+      clearTimeout(infoTimer);
+      clearInterval(factTimer);
     };
   }, []);
 
