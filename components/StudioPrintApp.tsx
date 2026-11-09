@@ -205,7 +205,7 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
-      setCurrentImageBlob(null);
+      queueMicrotask(() => setCurrentImageBlob(null));
       return;
     }
     const canvas = document.createElement("canvas");
