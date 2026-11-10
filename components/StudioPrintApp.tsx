@@ -205,9 +205,11 @@ export function StudioPrintApp() {
 
   useEffect(() => {
     if (!sourceImage) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentImageBlob(null);
       return;
     }
+    if (typeof document === "undefined") return;
     const canvas = document.createElement("canvas");
     canvas.width = sourceImage.width;
     canvas.height = sourceImage.height;
@@ -223,7 +225,8 @@ export function StudioPrintApp() {
       const blob = await res.blob();
       const file = new File([blob], `${customer.customer_name}.jpg`, { type: "image/jpeg" });
       const url = URL.createObjectURL(blob);
-      const img = new (window.Image as any)();
+      if (typeof document === "undefined") return;
+      const img = document.createElement("img");
       img.onload = () => handleImage(file, img, url);
       img.src = url;
     } catch (error) {
@@ -344,7 +347,7 @@ export function StudioPrintApp() {
       title: string;
       description: string;
       sectionId?: (typeof workflowSections)[number]["id"];
-      side?: "top" | "right" | "bottom" | "left" | "over";
+      side?: "top" | "right" | "bottom" | "left";
       align?: "start" | "center" | "end";
     }): DriveStep => ({
       element,
@@ -428,7 +431,9 @@ export function StudioPrintApp() {
     });
 
     tourRef.current = tour;
-    window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STUDIO_TOUR_STORAGE_KEY, "1");
+    }
     tour.drive();
   }, [createTourStep, studioReady]);
 
@@ -491,15 +496,21 @@ export function StudioPrintApp() {
         </div>
         <div className="topbar-status">
           <div className="topbar-actions">
-            <button className="chrome-button" title="Export PNG" disabled={!canExport} onClick={exportPng}>
-              <DownloadCloud size={16} />
-            </button>
-            <button className="chrome-button" title="Export PDF" disabled={!canExport} onClick={exportPdf}>
-              <FileText size={16} />
-            </button>
-            <button className="chrome-button" title="Print" disabled={!canExport} onClick={print}>
-              <Printer size={16} />
-            </button>
+            <span className="inline-flex" title={canExport ? "Export PNG" : "Add an image first to export"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Export PNG" disabled={!canExport} onClick={exportPng}>
+                <DownloadCloud size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={canExport ? "Export PDF" : "Add an image first to export"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Export PDF" disabled={!canExport} onClick={exportPdf}>
+                <FileText size={16} />
+              </button>
+            </span>
+            <span className="inline-flex" title={canExport ? "Print" : "Add an image first to print"} tabIndex={!canExport ? 0 : undefined}>
+              <button className="chrome-button" aria-label="Print" disabled={!canExport} onClick={print}>
+                <Printer size={16} />
+              </button>
+            </span>
             <span className="topbar-action-sep" />
             <button className="chrome-button" title="Show tour" onClick={startStudioTour}>
               <HelpCircle size={16} />
